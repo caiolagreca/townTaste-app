@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
 import { hashSync, compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
@@ -9,7 +9,7 @@ import { UnprocessableEntity } from "../exceptions/validation";
 import { SignUpSchema } from "../schema/users";
 import { NotFoundException } from "../exceptions/not-found";
 
-export const signup = async (
+export const signup: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -50,6 +50,40 @@ export const signup = async (
   res.json({ success: true, user });
 };
 
-export const me = async (req: Request, res: Response) => {
+export const login: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  SignUpSchema.parse(req.body);
+  const { email, password } = req.body;
+
+  let user = await prismaClient.user.findFirst({ where: { email } });
+  if (!user) {
+    throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
+  }
+  if (!compareSync(password, user.password)) {
+    return next(
+      new BadRequestsException(
+        "Incorrect password.",
+        ErrorCode.INCORRECT_PASSWORD
+      )
+    );
+  }
+  const token = jwt.sign(
+    {
+      userId: user.id,
+    },
+    JWT_SECRET
+  );
+  res.json({ user, token });
+};
+
+// me => return the logged user
+export const me: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   res.json(req.user);
 };
