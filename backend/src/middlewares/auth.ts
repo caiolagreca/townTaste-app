@@ -12,15 +12,7 @@ const authMiddleware: RequestHandler = async (
   next: NextFunction
 ) => {
   //1. Extract the token from header
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return next(
-      new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
-    );
-  }
-
-  //2. Extract the token
-  const token = authHeader;
+  const token = req.headers.authorization;
   if (!token) {
     return next(
       new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
@@ -28,10 +20,10 @@ const authMiddleware: RequestHandler = async (
   }
 
   try {
-    //3. If the token is present, verify that token and extract the payload
+    //2. If the token is present, verify that token and extract the payload
     const payload = jwt.verify(token, JWT_SECRET) as any;
 
-    //4. to get the user from the payload
+    //3. to get the user from the payload
     const user = await prismaClient.user.findFirst({
       where: { id: payload.userId },
     });
@@ -41,7 +33,7 @@ const authMiddleware: RequestHandler = async (
       );
     }
 
-    //5. to attach the user to the current request object
+    //4. to attach the user to the current request object
     req.user = user;
     next();
   } catch (error) {

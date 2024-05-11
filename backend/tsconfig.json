@@ -105,13 +105,20 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "baseUrl": "./", /* signifies that all module resolutions start from the root of the project directory. */
-    "typeRoots": ["./node_modules/@types", "./src/types"], /* TypeScript will include these paths as possible locations to find type definitions. */
+    "baseUrl": "./" /* signifies that all module resolutions start from the root of the project directory. */,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ] /* TypeScript will include these paths as possible locations to find type definitions. */,
     "paths": {
-      "*": ["src/*", "types/*"] /* any module import should be resolved by looking in the src and types directories under the root.  */
+      "*": ["*", "../node_modules/*"],
+      "schema/*": ["schema/*"],
+      "types/*": ["types/*"],
+      "validations/*": ["validations/*"],
+      "exceptions/*": ["exceptions/*"]
     }
   },
-  
+
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
