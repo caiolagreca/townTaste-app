@@ -13,7 +13,7 @@ export const errorHandler = (method: RequestHandler): RequestHandler => {
       } else {
         exception = new InternalException(
           "Something went wrong.",
-          error,
+          error.message,
           ErrorCode.INTERNAL_EXCEPTION
         );
       }

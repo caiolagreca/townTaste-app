@@ -1,11 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
+const express = require("express");
 import { UnauthorizedException } from "../exceptions/unauthorized";
 import { ErrorCode } from "../exceptions/root";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secrets";
 import { prismaClient } from "..";
 
-const authMiddleware = async (
+const authMiddleware: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -19,7 +20,7 @@ const authMiddleware = async (
   }
 
   //2. Extract the token
-  const token = authHeader.split(" ")[1];
+  const token = authHeader;
   if (!token) {
     return next(
       new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
@@ -39,7 +40,7 @@ const authMiddleware = async (
         new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
       );
     }
-    
+
     //5. to attach the user to the current request object
     req.user = user;
     next();
