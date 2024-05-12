@@ -5,6 +5,7 @@ import { ErrorCode } from "../exceptions/root";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secrets";
 import { prismaClient } from "..";
+import { IJWTPayload } from "../types/types";
 
 const authMiddleware: RequestHandler = async (
   req: Request,
@@ -15,16 +16,16 @@ const authMiddleware: RequestHandler = async (
   const token = req.headers.authorization;
   if (!token) {
     return next(
-      new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
+      new UnauthorizedException("No token provided", ErrorCode.UNAUTHORIZED)
     );
   }
 
   try {
     //2. If the token is present, verify that token and extract the payload
-    const payload = jwt.verify(token, JWT_SECRET) as any;
+    const payload = jwt.verify(token, JWT_SECRET) as IJWTPayload;
 
     //3. to get the user from the payload
-    const user = await prismaClient.user.findFirst({
+    const user = await prismaClient.user.findUnique({
       where: { id: payload.userId },
     });
     if (!user) {

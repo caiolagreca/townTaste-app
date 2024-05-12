@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
-import { hashSync, compareSync } from "bcrypt";
+import bcrypt, { compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secrets";
 import { BadRequestsException } from "../exceptions/bad-requests";
@@ -29,7 +29,7 @@ export const signup: RequestHandler = async (
       );
     }
 
-    const hashedPassword = hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await prismaClient.user.create({
       data: { ...validateData, password: hashedPassword },
     });
@@ -62,7 +62,8 @@ export const login: RequestHandler = async (
       {
         userId: user.id,
       },
-      JWT_SECRET
+      JWT_SECRET,
+      { expiresIn: "24h" }
     );
     res.json({ success: true, user, token });
   } catch (error) {
