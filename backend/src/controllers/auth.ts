@@ -78,17 +78,61 @@ export const me: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.user; // No need to cast here if the type is extended globally
+    const user = req.user;
     if (!user) {
-      throw new Error("User not authenticated"); // Consider using a more specific error or custom error type
+      throw new Error("User not authenticated");
     }
     const userDto = UserDto(user); // Transform the user object through the DTO
     res.json({ success: true, user: userDto });
   } catch (error) {
-    console.error(error); // Detailed error logging
+    console.error(error);
     res.status(500).json({
       success: false,
       message: error instanceof Error ? error.message : "Unknown error",
     });
   }
+};
+
+export const updateUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req?.params;
+  try {
+    const user = await prismaClient.user.update({
+      where: { id: String(id) },
+      data: {},
+    });
+    if (!user) {
+      throw new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND);
+    }
+    res.json(updateUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const user = await prismaClient.user.delete({
+    where: { id: String(id) },
+  });
+  res.json(user);
+};
+
+export const fetchUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id }: { id?: string } = req.params;
+  const user = await prismaClient.user.findUnique({
+    where: { id: String(id) },
+  });
+  res.json(user);
 };
