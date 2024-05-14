@@ -29,8 +29,15 @@ export interface IUser {
   updatedAt: Date; // ISO string of last update date
 }
 
+export interface IUserUpdate {
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  age?: number;
+  address?: string;
+  profilePhoto?: string;
+}
+
 export interface IJWTPayload {
   userId: string;
 }
-
-

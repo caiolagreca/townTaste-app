@@ -9,6 +9,7 @@ import { NotFoundException } from "../exceptions/not-found";
 import { validateSignUp } from "../validations/validateSignUp";
 import { validateLogin } from "../validations/validateLogin";
 import { UserDto } from "../dtos/UserDto";
+import { validateUpdate } from "../validations/validateUpdate";
 
 export const signup: RequestHandler = async (
   req: Request,
@@ -98,16 +99,21 @@ export const updateUser: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req?.params;
-  try {
-    const user = await prismaClient.user.update({
-      where: { id: String(id) },
-      data: {},
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(403).json({
+      message: "User ID is missing in the request.",
     });
-    if (!user) {
-      throw new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND);
-    }
-    res.json(updateUser);
+  }
+
+  try {
+    const validateData = validateUpdate(req.body);
+    const user = await prismaClient.user.update({
+      where: { id: userId },
+      data: validateData,
+    });
+    res.json({ success: true, message: "User updated successfully", user });
   } catch (error) {
     next(error);
   }
@@ -118,11 +124,17 @@ export const deleteUser: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(403).json({
+      message: "User ID is missing in the request.",
+    });
+  }
   const user = await prismaClient.user.delete({
-    where: { id: String(id) },
+    where: { id: userId },
   });
-  res.json(user);
+  res.json({ success: true, message: "User deleted successfully" });
 };
 
 export const fetchUser: RequestHandler = async (

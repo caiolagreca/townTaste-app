@@ -13,7 +13,7 @@ const authMiddleware: RequestHandler = async (
   next: NextFunction
 ) => {
   //1. Extract the token from header
-  const token = req.headers.authorization;
+  const token = req.headers.authorization?.split(" ")[1]; // Split "Bearer <token>"
   if (!token) {
     return next(
       new UnauthorizedException("No token provided", ErrorCode.UNAUTHORIZED)
@@ -38,7 +38,12 @@ const authMiddleware: RequestHandler = async (
     req.user = user;
     next();
   } catch (error) {
-    next(new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED));
+    if (error instanceof jwt.TokenExpiredError) {
+      return next(new UnauthorizedException("Token has expired", ErrorCode.UNAUTHORIZED));
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return next(new UnauthorizedException("Token is invalid", ErrorCode.UNAUTHORIZED));
+    }
+    return next(new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED));
   }
 };
 

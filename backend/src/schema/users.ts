@@ -26,3 +26,22 @@ export const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
+
+export const UpdateUserSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  password: z
+    .string()
+    .min(7, { message: "Password must be 7 or more characters long" })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/,
+      {
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      }
+    )
+    .optional(),
+  age: z.number().int().positive().optional(),
+  address: z.string().optional(),
+  profilePhoto: z.string().optional(),
+});
