@@ -3,8 +3,8 @@ import {
   deleteUser,
   fetchUser,
   login,
-  me,
   signup,
+  updatePassword,
   updateUser,
 } from "../controllers/auth";
 import { errorHandler } from "../error-handler";
@@ -14,9 +14,14 @@ const authRoutes: Router = Router();
 
 authRoutes.post("/signup", errorHandler(signup));
 authRoutes.post("/login", errorHandler(login));
-authRoutes.get("/me", [authMiddleware], errorHandler(me));
-authRoutes.get("/profile", [authMiddleware], errorHandler(fetchUser));
-authRoutes.patch("/profile", [authMiddleware], errorHandler(updateUser)); //PATCH: Used for making partial updates to a resource.
-authRoutes.delete("/profile", [authMiddleware], errorHandler(deleteUser));
+authRoutes.post("/forgot-password", errorHandler(forgotPassword));
+authRoutes.post("/reset-password/:token", errorHandler(resetPassword));
+
+authRoutes.use(authMiddleware);
+
+authRoutes.get("/profile", errorHandler(fetchUser));
+authRoutes.patch("/profile", errorHandler(updateUser)); //PATCH: Used for making partial updates to a resource.
+authRoutes.delete("/profile", errorHandler(deleteUser));
+authRoutes.post("/change-password", errorHandler(updatePassword));
 
 export default authRoutes;

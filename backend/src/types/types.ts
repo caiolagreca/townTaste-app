@@ -41,3 +41,8 @@ export interface IUserUpdate {
 export interface IJWTPayload {
   userId: string;
 }
+
+export interface IPasswordUpdate {
+  currentPassword: string;
+  newPassword: string;
+}

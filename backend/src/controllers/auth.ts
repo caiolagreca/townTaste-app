@@ -2,6 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
 import bcrypt, { compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
+
 import { JWT_SECRET } from "../secrets";
 import { BadRequestsException } from "../exceptions/bad-requests";
 import { ErrorCode } from "../exceptions/root";
@@ -10,6 +11,8 @@ import { validateSignUp } from "../validations/validateSignUp";
 import { validateLogin } from "../validations/validateLogin";
 import { UserDto } from "../dtos/UserDto";
 import { validateUpdate } from "../validations/validateUpdate";
+import { UnauthorizedException } from "../exceptions/unauthorized";
+import { validateUpdatePassword } from "../validations/validateUpdatePassword";
 
 export const signup: RequestHandler = async (
   req: Request,
@@ -34,7 +37,7 @@ export const signup: RequestHandler = async (
     const newUser = await prismaClient.user.create({
       data: { ...validateData, password: hashedPassword },
     });
-    res.json({ success: true, newUser });
+    res.json({ success: true, user: newUser });
   } catch (error) {
     next(error);
   }
@@ -72,8 +75,7 @@ export const login: RequestHandler = async (
   }
 };
 
-// me => return the logged user
-export const me: RequestHandler = async (
+export const fetchUser: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -81,16 +83,28 @@ export const me: RequestHandler = async (
   try {
     const user = req.user;
     if (!user) {
-      throw new Error("User not authenticated");
+      return next(
+        new UnauthorizedException(
+          "User not authenticated",
+          ErrorCode.UNAUTHORIZED
+        )
+      );
     }
     const userDto = UserDto(user); // Transform the user object through the DTO
     res.json({ success: true, user: userDto });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
+    console.error("Error fetching user:", error);
+    if (error instanceof UnauthorizedException) {
+      res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "An unexpected error occurred",
+      });
+    }
   }
 };
 
@@ -137,14 +151,45 @@ export const deleteUser: RequestHandler = async (
   res.json({ success: true, message: "User deleted successfully" });
 };
 
-export const fetchUser: RequestHandler = async (
+export const updatePassword: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { id }: { id?: string } = req.params;
-  const user = await prismaClient.user.findUnique({
-    where: { id: String(id) },
-  });
-  res.json(user);
+  const user = req.user;
+  if (!user) {
+    return res.status(403).json({
+      message: "User not authenticated",
+    });
+  }
+
+  try {
+    const validateData = validateUpdatePassword(req.body);
+    const { currentPassword, newPassword } = validateData;
+
+    const isMatch = compareSync(currentPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestsException(
+        "Current password is incorrect",
+        ErrorCode.INCORRECT_PASSWORD
+      );
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+    await prismaClient.user.update({
+      where: { id: user.id },
+      data: { password: hashPassword },
+    });
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  
 };
