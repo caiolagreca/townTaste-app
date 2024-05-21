@@ -3,6 +3,8 @@ import {
   deleteUser,
   fetchUser,
   login,
+  requestPasswordReset,
+  resetPassword,
   signup,
   updatePassword,
   updateUser,
@@ -14,8 +16,8 @@ const authRoutes: Router = Router();
 
 authRoutes.post("/signup", errorHandler(signup));
 authRoutes.post("/login", errorHandler(login));
-authRoutes.post("/forgot-password", errorHandler(forgotPassword));
-authRoutes.post("/reset-password/:token", errorHandler(resetPassword));
+authRoutes.post("/forgot-password", errorHandler(requestPasswordReset));
+authRoutes.post("/reset-password", errorHandler(resetPassword));
 
 authRoutes.use(authMiddleware);
 

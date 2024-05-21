@@ -1,3 +1,4 @@
+import { createResetToken, validateResetToken } from "./../services/resetTokenService";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
 import bcrypt, { compareSync } from "bcrypt";
@@ -13,6 +14,8 @@ import { UserDto } from "../dtos/UserDto";
 import { validateUpdate } from "../validations/validateUpdate";
 import { UnauthorizedException } from "../exceptions/unauthorized";
 import { validateUpdatePassword } from "../validations/validateUpdatePassword";
+import { sendResetPasswordEmail } from "../services/emailService";
+import { validateResetPassword } from "../validations/validateResetPassword";
 
 export const signup: RequestHandler = async (
   req: Request,
@@ -186,10 +189,53 @@ export const updatePassword: RequestHandler = async (
   }
 };
 
-export const forgotPassword: RequestHandler = async (
+export const requestPasswordReset: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  
+  const { email } = req.body;
+  try {
+    const user = await prismaClient.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
+    }
+
+    const token = await createResetToken(email);
+    await sendResetPasswordEmail(email, token);
+    res.json({ success: true, message: "Password reset email sent" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validateData = validateResetPassword(req.body);
+    const { token, newPassword } = validateData;
+
+    const userId = await validateResetToken(token);
+    if (!userId) {
+      throw new BadRequestsException(
+        "Invalid or expired token",
+        ErrorCode.UNAUTHORIZED
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prismaClient.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    await prismaClient.passwordResetToken.delete({ where: { token } });
+
+    res.json({ success: true, message: "Password reset successfully" });
+  } catch (error) {
+    next(error);
+  }
 };

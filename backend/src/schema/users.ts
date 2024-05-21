@@ -61,3 +61,17 @@ export const UpdatePasswordSchema = z.object({
       }
     ),
 });
+
+export const ResetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z
+    .string()
+    .min(7, { message: "Password must be 7 or more characters long" })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/,
+      {
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      }
+    ),
+});

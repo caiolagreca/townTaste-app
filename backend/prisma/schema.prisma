@@ -14,26 +14,33 @@ datasource db {
 }
 
 model User {
-  id                   String    @id @default(uuid())
-  firstName            String
-  lastName             String
-  age                  Int
-  email                String    @unique @db.VarChar(100)
-  password             String
-  resetPasswordToken   String? // field for the reset token
-  resetPasswordExpires DateTime? // field for the token expiration time
-  role                 Role      @default(CUSTOMER)
-  phoneNumber          String    @unique
-  profilePhoto         String?
-  address              String?
-  //favoriteRestaurants []
-  //favoriteFoods []
-  //reservedSpots []
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  id           String   @id @default(uuid())
+  firstName    String
+  lastName     String
+  age          Int
+  email        String   @unique @db.VarChar(100)
+  password     String
+  role         Role     @default(CUSTOMER)
+  phoneNumber  String   @unique
+  profilePhoto String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  passwordResetTokens PasswordResetToken[]
 
   @@index([email])
   @@map("users")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  createdAt DateTime @default(now())
 }
 
 enum Role {
