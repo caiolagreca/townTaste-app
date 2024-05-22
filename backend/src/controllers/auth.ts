@@ -1,4 +1,7 @@
-import { createResetToken, validateResetToken } from "./../services/resetTokenService";
+import {
+  createResetToken,
+  validateResetToken,
+} from "./../services/resetTokenService";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
 import bcrypt, { compareSync } from "bcrypt";
@@ -196,15 +199,23 @@ export const requestPasswordReset: RequestHandler = async (
 ) => {
   const { email } = req.body;
   try {
+    console.log("Received email for password reset:", email);
+
     const user = await prismaClient.user.findUnique({ where: { email } });
+    console.log("Received email in database:", user);
+
     if (!user) {
+      console.error("User not found for email:", email);
       throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
     }
 
     const token = await createResetToken(email);
     await sendResetPasswordEmail(email, token);
-    res.json({ success: true, message: "Password reset email sent" });
+    res
+      .status(200)
+      .json({ success: true, message: "Password reset email sent" });
   } catch (error) {
+    console.error("Error in requestPasswordReset:", error);
     next(error);
   }
 };
@@ -234,7 +245,9 @@ export const resetPassword: RequestHandler = async (
 
     await prismaClient.passwordResetToken.delete({ where: { token } });
 
-    res.json({ success: true, message: "Password reset successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Password reset successfully" });
   } catch (error) {
     next(error);
   }
