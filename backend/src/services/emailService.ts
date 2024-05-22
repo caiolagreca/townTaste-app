@@ -5,10 +5,13 @@ export const sendResetPasswordEmail = async (
   token: string
 ): Promise<void> => {
   const transporter = nodemailer.createTransport({
-    service: "Gmail",
+    service: "Hotmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false, //ignore self-signed certificates
     },
   });
 

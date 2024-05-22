@@ -4,12 +4,6 @@ import { generateResetToken } from "../utils/generateResetToken";
 import * as jwt from "jsonwebtoken";
 
 export const createResetToken = async (userId: string): Promise<string> => {
-  
-  const user = await prismaClient.user.findUnique({ where: { id: userId } });
-  if (!user) {
-    throw new Error("User not found");
-  }
-
   const token = generateResetToken(userId);
 
   await prismaClient.passwordResetToken.create({
@@ -19,6 +13,7 @@ export const createResetToken = async (userId: string): Promise<string> => {
       expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
     },
   });
+
   return token;
 };
 

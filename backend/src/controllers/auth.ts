@@ -202,14 +202,14 @@ export const requestPasswordReset: RequestHandler = async (
     console.log("Received email for password reset:", email);
 
     const user = await prismaClient.user.findUnique({ where: { email } });
-    console.log("Received email in database:", user);
+    console.log("User found in database:", user);
 
     if (!user) {
       console.error("User not found for email:", email);
       throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
     }
 
-    const token = await createResetToken(email);
+    const token = await createResetToken(user.id);
     await sendResetPasswordEmail(email, token);
     res
       .status(200)
