@@ -7,7 +7,7 @@ module.exports = {
         primary: {
           green: "#2ecc71",
           orange: "#e67e22",
-          red: "#e74c3c",
+          red: "#800606",
         },
         secondary: {
           yellow: "#f1c40f",
@@ -28,6 +28,7 @@ module.exports = {
       },
       maxWidth: {
         "3/5": "60%",
+        "4/5": "80%",
       },
     },
   },

@@ -40,8 +40,9 @@ export const signup: RequestHandler = async (
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const { confirmPassword, ...userData } = validateData; // Exclude confirmPassword
     const newUser = await prismaClient.user.create({
-      data: { ...validateData, password: hashedPassword },
+      data: { ...userData, password: hashedPassword },
     });
     res.json({ success: true, user: newUser });
   } catch (error) {
@@ -151,10 +152,18 @@ export const deleteUser: RequestHandler = async (
       message: "User ID is missing in the request.",
     });
   }
-  const user = await prismaClient.user.delete({
-    where: { id: userId },
-  });
-  res.json({ success: true, message: "User deleted successfully" });
+  try {
+    await prismaClient.passwordResetToken.deleteMany({
+      where: { userId: userId },
+    });
+
+    const user = await prismaClient.user.delete({
+      where: { id: userId },
+    });
+    res.json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updatePassword: RequestHandler = async (
