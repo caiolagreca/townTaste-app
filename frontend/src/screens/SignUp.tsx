@@ -15,22 +15,24 @@ export const SignUp = () => {
           </Text>
         </View>
         <View className="my-3">
-          <InputField inputProps="Email" />
+          {/* <InputField inputProps="Email" />
           <InputField inputProps="Password" secure />
-          <InputField inputProps="Confirm Password" secure />
+          <InputField inputProps="Confirm Password" secure /> */}
         </View>
-        <MainButton
+  {/*       <MainButton
           stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
           styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
+          onPressProps={}
           children="Sign Up"
           screenName="Login"
         />
         <MainButton
           stylePressableProps="p-3"
           styleTextProps="font-poppins text-center text-base"
+          onPressProps={}
           children="Already have an account"
           screenName="Login"
-        />
+        /> */}
         <View className="p-3">
           <Text className="font-poppins text-center text-sm">
             Or continue with

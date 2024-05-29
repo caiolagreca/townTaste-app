@@ -20,8 +20,10 @@ npm install @react-navigation/stack
 npm install @react-navigation/native-stack
 npm install react-native-screens react-native-safe-area-context
 
+# using formik to validate forms and yup to send error messages to user:
+npm i formik yup
+ 
 # Features to do:
 
-<!-- frontend -->
-
 Splashscreen
+add styles for when buttons are pressed

@@ -7,21 +7,24 @@ import { Pressable, Text } from "react-native";
 interface Props {
   styleTextProps: string;
   stylePressableProps: string;
+  onPressProps: () => void;
   children: string;
-  screenName: keyof RootStackParamList;
+  //screenName: keyof RootStackParamList;
 }
 
 export const MainButton: React.FC<Props> = ({
   styleTextProps,
   stylePressableProps,
+  onPressProps,
   children,
-  screenName,
+  /* screenName, */
 }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <Pressable
-      onPress={() => navigation.navigate(screenName)}
+      onPress={onPressProps}
+      /* onPress={() => navigation.navigate(screenName)} */
       className={stylePressableProps}
     >
       <Text className={styleTextProps}>{children}</Text>

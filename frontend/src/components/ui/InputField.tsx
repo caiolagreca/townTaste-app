@@ -1,13 +1,28 @@
 import React, { useState } from "react";
-import { Pressable, TextInput, View } from "react-native";
+import {
+  NativeSyntheticEvent,
+  Pressable,
+  TextInput,
+  TextInputFocusEventData,
+  TextInputProps,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-interface Props {
+interface Props extends TextInputProps {
   inputProps: string;
   secure?: boolean;
+  onChangeProps: (value: string) => void;
+  onBlurProps?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 }
 
-export const InputField: React.FC<Props> = ({ inputProps, secure }) => {
+export const InputField: React.FC<Props> = ({
+  inputProps,
+  secure,
+  onChangeProps,
+  onBlurProps,
+  ...props
+}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [iseFocused, setIsFocused] = useState(false);
 
@@ -19,8 +34,11 @@ export const InputField: React.FC<Props> = ({ inputProps, secure }) => {
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(false);
+    if (onBlurProps) {
+      onBlurProps(e);
+    }
   };
 
   return (
@@ -33,6 +51,8 @@ export const InputField: React.FC<Props> = ({ inputProps, secure }) => {
         }`}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onChangeText={onChangeProps}
+        {...props}
       />
       {secure && (
         <Pressable
