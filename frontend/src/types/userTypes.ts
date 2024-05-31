@@ -1,3 +1,5 @@
+import { store } from "@/redux/store";
+
 export interface User {
   id: string;
   email: string;
@@ -21,3 +23,11 @@ export interface LoginResponse {
   user: User;
   token: string;
 }
+
+export interface LoginUser {
+  email: string;
+  password: string;
+}
+//Inferring these types from the store itself means that they correctly update as you add more state slices or modify middleware settings.
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

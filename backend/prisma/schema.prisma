@@ -16,12 +16,12 @@ datasource db {
 model User {
   id           String   @id @default(uuid())
   firstName    String
-  lastName     String
-  age          Int
+  lastName     String?
+  age          Int?
   email        String   @unique @db.VarChar(100)
   password     String
   role         Role     @default(CUSTOMER)
-  phoneNumber  String   @unique
+  phoneNumber  String?   @unique
   profilePhoto String?
   address      String?
   createdAt    DateTime @default(now())

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   NativeSyntheticEvent,
   Pressable,
+  Text,
   TextInput,
   TextInputFocusEventData,
   TextInputProps,
@@ -14,6 +15,7 @@ interface Props extends TextInputProps {
   secure?: boolean;
   onChangeProps: (value: string) => void;
   onBlurProps?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  error?: string | false | undefined;
 }
 
 export const InputField: React.FC<Props> = ({
@@ -21,6 +23,7 @@ export const InputField: React.FC<Props> = ({
   secure,
   onChangeProps,
   onBlurProps,
+  error,
   ...props
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -66,6 +69,7 @@ export const InputField: React.FC<Props> = ({
           />
         </Pressable>
       )}
+      {error && <Text className="text-red-500 mt-1">{error}</Text>}
     </View>
   );
 };

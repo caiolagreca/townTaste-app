@@ -12,14 +12,14 @@ const initialState: UserState = {
 
 export const loginAction = createAsyncThunk<
   LoginResponse,
-  { email: string; password: string }
+  { email: string; password: string },
+  { rejectValue: { message: string; errorCode?: number } }
 >("auth/login", async (userData, thunkAPI) => {
   try {
     const response = await loginUser(userData);
-    console.log("login redux", response);
     return response;
-  } catch (error) {
-    return thunkAPI.rejectWithValue((error as any).response.data);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -41,18 +41,28 @@ const authSlice = createSlice({
       })
       .addCase(
         loginAction.fulfilled,
-        (state, actiom: PayloadAction<LoginResponse>) => {
+        (state, action: PayloadAction<LoginResponse>) => {
           state.loading = false;
-          state.user = actiom.payload.user;
-          state.token = actiom.payload.token;
+          state.user = action.payload.user;
+          state.token = action.payload.token;
           state.appError = null;
           state.serverError = null;
         }
       )
       .addCase(loginAction.rejected, (state, action) => {
         state.loading = false;
-        state.appError = action?.error?.message;
-        state.serverError = action?.error?.message;
+        const payload = action.payload as {
+          message: string;
+          errorCode?: number;
+        };
+        if (payload?.errorCode === 1001) {
+          state.appError = "User not found";
+        } else if (payload?.errorCode === 1003) {
+          state.appError = "Incorrect password";
+        } else {
+          state.appError = payload?.message || "Login failed";
+        }
+        state.serverError = action.error.message || null;
       });
   },
 });
