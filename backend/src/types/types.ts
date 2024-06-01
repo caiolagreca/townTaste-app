@@ -3,9 +3,9 @@ export interface IUserSignUp {
   password: string;
   confirmPassword: string;
   firstName: string;
-  lastName: string;
-  age: number;
-  phoneNumber: string;
+  lastName?: string;
+  age?: number;
+  phoneNumber?: string;
   address?: string;
   profilePhoto?: string;
 }
@@ -18,12 +18,12 @@ export interface IUserLogin {
 export interface IUser {
   id: string; // UUID string
   firstName: string; // User's first name
-  lastName: string; // User's last name
-  age: number; // User's age
+  lastName?: string | null; // User's last name
+  age?: number | null; // User's age
   email: string; // User's email address
   password: string; // User's hashed password
   role: "CUSTOMER" | "RESTAURANT" | "ADMIN"; // User roles, assuming these are the only roles
-  phoneNumber: string; // User's phone number
+  phoneNumber?: string | null; // User's phone number
   profilePhoto?: string | null; // Optional profile photo URL or null
   address?: string | null; // Optional address or null
   createdAt: Date; // ISO string of creation date

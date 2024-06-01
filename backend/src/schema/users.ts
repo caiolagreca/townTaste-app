@@ -3,7 +3,7 @@ import { z } from "zod";
 export const SignUpSchema = z
   .object({
     firstName: z.string(),
-    lastName: z.string(),
+    lastName: z.string().optional(),
     email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
@@ -16,10 +16,13 @@ export const SignUpSchema = z
         }
       ),
     confirmPassword: z.string(),
-    age: z.number().int().positive(),
-    phoneNumber: z.string().regex(/^\+\d{1,4}\s?\d{7,14}$/, {
-      message: "Invalid phone number format",
-    }),
+    age: z.number().int().positive().optional(),
+    phoneNumber: z
+      .string()
+      .regex(/^\+\d{1,4}\s?\d{7,14}$/, {
+        message: "Invalid phone number format",
+      })
+      .optional(),
     address: z.string().optional(),
     profilePhoto: z.string().optional(),
   })

@@ -1,6 +1,13 @@
+import { ErrorCode } from "./../../../../backend/src/exceptions/root";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { LoginResponse, UserState } from "@/types/userTypes";
-import { loginUser } from "@/services/authService";
+import {
+  LoginResponse,
+  LoginUser,
+  SignUpUser,
+  SingUpResponse,
+  UserState,
+} from "@/types/userTypes";
+import { loginUser, signUpUser } from "@/services/authService";
 
 const initialState: UserState = {
   user: null,
@@ -11,12 +18,26 @@ const initialState: UserState = {
 };
 
 export const loginAction = createAsyncThunk<
-  LoginResponse,
-  { email: string; password: string },
-  { rejectValue: { message: string; errorCode?: number } }
+  LoginResponse, //The type of the expected response data if the login is successful.
+  LoginUser, //The type of the argument userData that the thunk function will receive. It includes the user's email and password.
+  { rejectValue: { message: string; errorCode?: number } } //The type of the value that will be passed to the rejectWithValue function in case of an error.
 >("auth/login", async (userData, thunkAPI) => {
+  //thunkAPI is an object that provides various utilities for interacting with the Redux store, including dispatch, getState, and rejectWithValue.
   try {
     const response = await loginUser(userData);
+    return response;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export const signUpAction = createAsyncThunk<
+  SingUpResponse,
+  SignUpUser,
+  { rejectValue: { message: string; errorCode?: number } }
+>("auth/signup", async (userData, thunkAPI) => {
+  try {
+    const response = await signUpUser(userData);
     return response;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
@@ -63,6 +84,26 @@ const authSlice = createSlice({
           state.appError = payload?.message || "Login failed";
         }
         state.serverError = action.error.message || null;
+      });
+    builder
+      .addCase(signUpAction.pending, (state) => {
+        state.loading = true;
+        state.appError = null;
+        state.serverError = null;
+      })
+      .addCase(
+        signUpAction.fulfilled,
+        (state, action: PayloadAction<SingUpResponse>) => {
+          state.loading = false;
+          state.user = action.payload.user;
+          state.appError = null;
+          state.serverError = null;
+        }
+      )
+      .addCase(signUpAction.rejected, (state, action) => {
+        state.loading = false;
+        state.appError = action?.payload?.message;
+        state.serverError = action?.payload?.message;
       });
   },
 });

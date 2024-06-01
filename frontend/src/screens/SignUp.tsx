@@ -1,9 +1,9 @@
 import { IconButton } from "@/components/ui/IconButton";
 import { InputField } from "@/components/ui/InputField";
 import { MainButton } from "@/components/ui/MainButton";
-import { loginAction } from "@/redux/slices/authSlice";
+import { loginAction, logout, signUpAction } from "@/redux/slices/authSlice";
 import { LoginScreenNavigationProp } from "@/types/navigationTypes";
-import { AppDispatch, RootState } from "@/types/userTypes";
+import { AppDispatch, RootState, SignUpUser } from "@/types/userTypes";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import React, { useEffect } from "react";
@@ -19,12 +19,15 @@ import {
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 const formSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string().required("Password is required"),
+  confirmPassword: Yup.string().required("Confirm your pasword"),
   firstName: Yup.string().required("Name is required"),
 });
 
@@ -32,9 +35,17 @@ export const SignUp: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
-  const { user, loading, appError, serverError } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (user) {
+      navigation.navigate("Login");
+    }
+  }, [user, navigation]);
+
+  useEffect(() => {
+    dispatch(logout());
+  }, [dispatch]);
 
   const loginPressed = () => {
     navigation.navigate("Login");
@@ -46,18 +57,31 @@ export const SignUp: React.FC = () => {
       password: string;
       confirmPassword: string;
       firstName: string;
-      lastName: string;
-      phoneNumber: string;
+      lastName?: string;
+      phoneNumber?: string;
     },
     { setSubmitting, setErrors }: any
   ) => {
     try {
-      await dispatch(loginAction(values)).unwrap();
+      const uuid = uuidv4();
+      const signUpData: SignUpUser = {
+        user: {
+          id: uuid,
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phoneNumber: values.phoneNumber,
+        },
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      };
+      await dispatch(signUpAction(signUpData)).unwrap();
       navigation.navigate("Login");
     } catch (error: any) {
       const errors: { email?: string; password?: string } = {};
       setErrors(errors);
       Alert.alert("Sign Up failed", error.message);
+      console.log(error);
     } finally {
       setSubmitting(false);
     }
@@ -90,6 +114,7 @@ export const SignUp: React.FC = () => {
               errors,
               touched,
               submitCount,
+              isSubmitting,
             }) => (
               <View className="p-3">
                 <View className="items-center">
@@ -97,30 +122,37 @@ export const SignUp: React.FC = () => {
                     Create Account
                   </Text>
                   <Text className="font-poppins text-sm max-w-4/5 text-center">
-                    Create an account so you can explore all the existing jobs
+                    Create an account so you can explore all the existing
+                    restaurants
                   </Text>
                 </View>
                 <View className="my-3">
-                  <InputField
-                    inputProps="Name"
-                    value={values.firstName}
-                    onChangeProps={handleChange("firstName")}
-                    onBlurProps={handleBlur("firstName")}
-                    error={
-                      submitCount > 0 && touched.firstName && errors.firstName
-                    }
-                  />
-                  <InputField
-                    inputProps="Last Name"
-                    value={values.lastName}
-                    onChangeProps={handleChange("lastName")}
-                    onBlurProps={handleBlur("lastName")}
-                    error={
-                      submitCount > 0 && touched.lastName && errors.lastName
-                    }
-                  />
+                  <View className="flex-row">
+                    <InputField
+                      inputProps=" First Name"
+                      containerProps="flex-1 mr-2"
+                      value={values.firstName}
+                      onChangeProps={handleChange("firstName")}
+                      onBlurProps={handleBlur("firstName")}
+                      error={
+                        submitCount > 0 && touched.firstName && errors.firstName
+                      }
+                    />
+
+                    <InputField
+                      inputProps="Last Name"
+                      containerProps="flex-1 ml-2"
+                      value={values.lastName}
+                      onChangeProps={handleChange("lastName")}
+                      onBlurProps={handleBlur("lastName")}
+                      error={
+                        submitCount > 0 && touched.lastName && errors.lastName
+                      }
+                    />
+                  </View>
                   <InputField
                     inputProps="Phone Number"
+                    containerProps="mt-3"
                     value={values.phoneNumber}
                     onChangeProps={handleChange("phoneNumber")}
                     onBlurProps={handleBlur("phoneNumber")}
@@ -132,13 +164,7 @@ export const SignUp: React.FC = () => {
                   />
                   <InputField
                     inputProps="Email"
-                    value={values.email}
-                    onChangeProps={handleChange("email")}
-                    onBlurProps={handleBlur("email")}
-                    error={submitCount > 0 && touched.email && errors.email}
-                  />
-                  <InputField
-                    inputProps="Email"
+                    containerProps="mt-3"
                     value={values.email}
                     onChangeProps={handleChange("email")}
                     onBlurProps={handleBlur("email")}
@@ -146,6 +172,7 @@ export const SignUp: React.FC = () => {
                   />
                   <InputField
                     inputProps="Password"
+                    containerProps="mt-3"
                     secure
                     value={values.password}
                     onChangeProps={handleChange("password")}
@@ -156,6 +183,7 @@ export const SignUp: React.FC = () => {
                   />
                   <InputField
                     inputProps="Confirm Password"
+                    containerProps="mt-3"
                     secure
                     value={values.confirmPassword}
                     onChangeProps={handleChange("confirmPassword")}
@@ -171,6 +199,7 @@ export const SignUp: React.FC = () => {
                   stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
                   styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
                   onPressProps={handleSubmit}
+                  isLoading={isSubmitting}
                   children="Sign Up"
                 />
                 <MainButton

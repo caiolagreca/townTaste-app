@@ -77,6 +77,7 @@ export const login: RequestHandler = async (
       { expiresIn: "24h" }
     );
     res.json({ success: true, user, token });
+
   } catch (error) {
     next(error);
   }

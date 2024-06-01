@@ -23,9 +23,7 @@ export const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
-  const { user, loading, appError, serverError } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (user) {
@@ -83,6 +81,7 @@ export const Login: React.FC = () => {
           errors,
           touched,
           submitCount,
+          isSubmitting,
         }) => (
           <View className="p-3">
             <View className="items-center">
@@ -94,6 +93,7 @@ export const Login: React.FC = () => {
             <View className="my-3">
               <InputField
                 inputProps="Email"
+                containerProps="mt-3"
                 value={values.email}
                 onChangeProps={handleChange("email")}
                 onBlurProps={handleBlur("email")}
@@ -101,6 +101,7 @@ export const Login: React.FC = () => {
               />
               <InputField
                 inputProps="Password"
+                containerProps="mt-3"
                 secure
                 value={values.password}
                 onChangeProps={handleChange("password")}
@@ -121,6 +122,7 @@ export const Login: React.FC = () => {
               stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
               styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
               onPressProps={handleSubmit}
+              isLoading={isSubmitting}
               children="Sign in"
             />
             <MainButton

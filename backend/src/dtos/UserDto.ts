@@ -6,14 +6,14 @@ export function UserDto(user: IUser) {
   return {
     id: user.id,
     firstName: user.firstName,
-    lastName: user.lastName,
+    lastName: user.lastName || null,
     age: user.age,
     email: user.email,
     role: user.role,
-    phoneNumber: user.phoneNumber,
-    profilePhoto: user.profilePhoto,
-    address: user.address,
-    createdAt: user.createdAt.toString(), // Convert Date to ISO string
-    updatedAt: user.updatedAt.toString(), // Convert Date to ISO string
+    phoneNumber: user.phoneNumber || null,
+    profilePhoto: user.profilePhoto || null,
+    address: user.address || null,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 }

@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface Props extends TextInputProps {
   inputProps: string;
+  containerProps: string;
   secure?: boolean;
   onChangeProps: (value: string) => void;
   onBlurProps?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
@@ -20,6 +21,7 @@ interface Props extends TextInputProps {
 
 export const InputField: React.FC<Props> = ({
   inputProps,
+  containerProps,
   secure,
   onChangeProps,
   onBlurProps,
@@ -45,31 +47,36 @@ export const InputField: React.FC<Props> = ({
   };
 
   return (
-    <View className={`relative my-3 ${iseFocused ? "shadow-lg" : ""}`}>
-      <TextInput
-        placeholder={inputProps}
-        secureTextEntry={secure && !isPasswordVisible}
-        className={`font-poppins text-sm p-4 bg-slate-200 rounded-lg my-1 ${
-          iseFocused ? "border-2 border-blue-500" : ""
-        }`}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onChangeText={onChangeProps}
-        {...props}
-      />
-      {secure && (
-        <Pressable
-          onPress={togglePasswordVisibility}
-          className="absolute right-3 top-4"
-        >
-          <Ionicons
-            name={isPasswordVisible ? "eye-off" : "eye"}
-            size={24}
-            color="gray"
-          />
-        </Pressable>
-      )}
-      {error && <Text className="text-red-500 mt-1">{error}</Text>}
+    <View className={containerProps}>
+      <View className="mb-1">
+        <Text className="font-poppins text-sm">{inputProps}</Text>
+      </View>
+      <View className={`relative my-1 ${iseFocused ? "shadow-lg" : ""}`}>
+        <TextInput
+          placeholder={inputProps}
+          secureTextEntry={secure && !isPasswordVisible}
+          className={`font-poppins text-sm p-4 bg-slate-200 rounded-lg ${
+            iseFocused ? "border-2 border-blue-500" : ""
+          }`}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChangeText={onChangeProps}
+          {...props}
+        />
+        {secure && (
+          <Pressable
+            onPress={togglePasswordVisibility}
+            className="absolute right-3 top-4"
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye-off" : "eye"}
+              size={24}
+              color="gray"
+            />
+          </Pressable>
+        )}
+        {error && <Text className="text-red-500 mt-1">{error}</Text>}
+      </View>
     </View>
   );
 };

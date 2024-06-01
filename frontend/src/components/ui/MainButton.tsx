@@ -2,14 +2,19 @@ import { RootStackParamList } from "@/types/navigationTypes";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
-import { Pressable, Text } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  PressableStateCallbackType,
+  Text,
+} from "react-native";
 
 interface Props {
   styleTextProps: string;
   stylePressableProps: string;
   onPressProps: () => void;
   children: string;
-  //screenName: keyof RootStackParamList;
+  isLoading?: boolean;
 }
 
 export const MainButton: React.FC<Props> = ({
@@ -17,17 +22,24 @@ export const MainButton: React.FC<Props> = ({
   stylePressableProps,
   onPressProps,
   children,
-  /* screenName, */
+  isLoading,
 }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <Pressable
       onPress={onPressProps}
-      /* onPress={() => navigation.navigate(screenName)} */
-      className={stylePressableProps}
+      className={`${stylePressableProps} ${
+        isLoading ? "opacity-70" : "opacity-100"
+      } ${({ pressed }: PressableStateCallbackType) =>
+        pressed ? "opacity-70" : "opacity-100"} `}
+      android_ripple={{ color: "rgba(255, 255, 255, 0.2)" }}
     >
-      <Text className={styleTextProps}>{children}</Text>
+      {isLoading ? (
+        <ActivityIndicator color="#FFF" />
+      ) : (
+        <Text className={styleTextProps}>{children}</Text>
+      )}
     </Pressable>
   );
 };
