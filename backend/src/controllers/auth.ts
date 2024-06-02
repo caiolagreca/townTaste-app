@@ -19,6 +19,14 @@ import { UnauthorizedException } from "../exceptions/unauthorized";
 import { validateUpdatePassword } from "../validations/validateUpdatePassword";
 import { sendResetPasswordEmail } from "../services/emailService";
 import { validateResetPassword } from "../validations/validateResetPassword";
+import { Prisma } from "@prisma/client";
+
+// Utility function to remove undefined values
+function removeUndefinedFields<T extends object>(obj: T): T {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== undefined)
+  ) as T;
+}
 
 export const signup: RequestHandler = async (
   req: Request,
@@ -27,7 +35,7 @@ export const signup: RequestHandler = async (
 ) => {
   try {
     const validateData = validateSignUp(req.body);
-    const { email, password, lastName, age, phoneNumber } = validateData;
+    const { email, password, firstName, lastName, phoneNumber } = validateData;
 
     const existingUser = await prismaClient.user.findUnique({
       where: { email },
@@ -40,16 +48,23 @@ export const signup: RequestHandler = async (
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const { confirmPassword, ...userData } = validateData; // Exclude confirmPassword
+
+    // Create userData object
+    const userData = {
+      email,
+      firstName,
+      lastName: lastName || undefined,
+      phoneNumber: phoneNumber || undefined,
+      password: hashedPassword,
+    };
+
+    // Clean userData object
+    const cleanedUserData = removeUndefinedFields(userData);
+
     const newUser = await prismaClient.user.create({
-      data: {
-        ...userData,
-        password: hashedPassword,
-        lastName: lastName!,
-        age: age!,
-        phoneNumber: phoneNumber!,
-      },
+      data: cleanedUserData as Prisma.UserCreateInput, // Type assertion
     });
+
     res.json({ success: true, user: newUser });
   } catch (error) {
     next(error);

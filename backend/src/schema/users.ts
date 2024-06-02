@@ -19,10 +19,14 @@ export const SignUpSchema = z
     age: z.number().int().positive().optional(),
     phoneNumber: z
       .string()
-      .regex(/^\+\d{1,4}\s?\d{7,14}$/, {
-        message: "Invalid phone number format",
-      })
-      .optional(),
+      .optional()
+      .refine(
+        (val) =>
+          val === undefined || val === "" || /^\+\d{1,4}\s?\d{7,14}$/.test(val),
+        {
+          message: "Invalid phone number format",
+        }
+      ),
     address: z.string().optional(),
     profilePhoto: z.string().optional(),
   })

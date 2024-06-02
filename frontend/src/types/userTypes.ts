@@ -9,6 +9,8 @@ export interface User {
   phoneNumber?: string;
   address?: string;
   profilePhoto?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserState {
@@ -40,8 +42,6 @@ export interface SignUpUser {
 
 export interface SingUpResponse {
   user: User;
-  password: string;
-  confirmPassword: string;
 }
 
 //Inferring these types from the store itself means that they correctly update as you add more state slices or modify middleware settings.

@@ -25,8 +25,7 @@ npm i formik yup
  
 # Features to do:
 
-insert labels for each input
 change ANY types
-insert loading content to screen and buttons
+remove standard random password apple
 Splashscreen
 add styles for when buttons are pressed

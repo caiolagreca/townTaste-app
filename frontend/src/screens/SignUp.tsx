@@ -19,8 +19,6 @@ import {
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
-import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
 
 const formSchema = Yup.object({
   email: Yup.string()
@@ -63,11 +61,11 @@ export const SignUp: React.FC = () => {
     { setSubmitting, setErrors }: any
   ) => {
     try {
-      const signUpData = {
+      const signUpData: SignUpUser = {
         email: values.email,
         firstName: values.firstName,
-        lastName: values.lastName || "",
-        phoneNumber: values.phoneNumber || "",
+        lastName: values.lastName || undefined,
+        phoneNumber: values.phoneNumber || undefined,
         password: values.password,
         confirmPassword: values.confirmPassword,
       };
