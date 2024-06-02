@@ -61,6 +61,7 @@ export const InputField: React.FC<Props> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChangeText={onChangeProps}
+          textContentType={secure ? "none" : "password"} // Disable password autofill
           {...props}
         />
         {secure && (
