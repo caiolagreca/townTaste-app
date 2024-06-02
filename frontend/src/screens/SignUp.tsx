@@ -63,25 +63,23 @@ export const SignUp: React.FC = () => {
     { setSubmitting, setErrors }: any
   ) => {
     try {
-      const uuid = uuidv4();
-      const signUpData: SignUpUser = {
-        user: {
-          id: uuid,
-          email: values.email,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          phoneNumber: values.phoneNumber,
-        },
+      const signUpData = {
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName || "",
+        phoneNumber: values.phoneNumber || "",
         password: values.password,
         confirmPassword: values.confirmPassword,
       };
+
+      console.log("dados: ", signUpData);
       await dispatch(signUpAction(signUpData)).unwrap();
       navigation.navigate("Login");
     } catch (error: any) {
       const errors: { email?: string; password?: string } = {};
       setErrors(errors);
       Alert.alert("Sign Up failed", error.message);
-      console.log(error);
+      console.log("error 6: ", error);
     } finally {
       setSubmitting(false);
     }

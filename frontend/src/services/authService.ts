@@ -1,4 +1,4 @@
-import { LoginResponse, LoginUser, SignUpUser } from "@/types/userTypes";
+import { LoginResponse, LoginUser, SignUpUser, SingUpResponse } from "@/types/userTypes";
 import { baseURL } from "@/utils/baseURL";
 import axios from "axios";
 
@@ -20,15 +20,16 @@ export const loginUser = async (userData: LoginUser) => {
 
 export const signUpUser = async (userData: SignUpUser) => {
   try {
-    const response = await axios.post<SignUpUser>(
+    const response = await axios.post<SingUpResponse>(
       `${baseURL}auth/signup`,
       userData
     );
     console.log("resposta: ", response.data);
     return response.data;
   } catch (error: any) {
+    console.log("error SignUpUser: ", error.response.data);
     if (error.response && error.response.data) {
-      throw error.response.data || "Login failed";
+      throw error.response.data || "SignUp failed";
     } else {
       throw new Error("Network error or server is not responding");
     }

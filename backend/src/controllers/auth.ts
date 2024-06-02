@@ -27,7 +27,7 @@ export const signup: RequestHandler = async (
 ) => {
   try {
     const validateData = validateSignUp(req.body);
-    const { email, password } = validateData;
+    const { email, password, lastName, age, phoneNumber } = validateData;
 
     const existingUser = await prismaClient.user.findUnique({
       where: { email },
@@ -42,7 +42,13 @@ export const signup: RequestHandler = async (
     const hashedPassword = await bcrypt.hash(password, 10);
     const { confirmPassword, ...userData } = validateData; // Exclude confirmPassword
     const newUser = await prismaClient.user.create({
-      data: { ...userData, password: hashedPassword },
+      data: {
+        ...userData,
+        password: hashedPassword,
+        lastName: lastName!,
+        age: age!,
+        phoneNumber: phoneNumber!,
+      },
     });
     res.json({ success: true, user: newUser });
   } catch (error) {
@@ -77,7 +83,6 @@ export const login: RequestHandler = async (
       { expiresIn: "24h" }
     );
     res.json({ success: true, user, token });
-
   } catch (error) {
     next(error);
   }

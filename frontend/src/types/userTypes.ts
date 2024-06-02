@@ -30,7 +30,10 @@ export interface LoginUser {
 }
 
 export interface SignUpUser {
-  user: User;
+  email: string;
+  firstName: string;
+  lastName?: string;
+  phoneNumber?: string;
   password: string;
   confirmPassword: string;
 }

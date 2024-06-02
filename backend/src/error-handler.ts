@@ -20,7 +20,7 @@ export const errorHandler = (method: RequestHandler): RequestHandler => {
             "Unprocessable entity.",
             ErrorCode.UNPROCESSABLE_ENTITY
           );
-          console.log("erro3: ", error);
+          console.log("erro31: ", error);
         } else {
           console.log("erro4: ", error);
           exception = new InternalException(

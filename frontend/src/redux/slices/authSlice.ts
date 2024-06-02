@@ -37,6 +37,7 @@ export const signUpAction = createAsyncThunk<
   { rejectValue: { message: string; errorCode?: number } }
 >("auth/signup", async (userData, thunkAPI) => {
   try {
+    console.log("dados 3: ", userData);
     const response = await signUpUser(userData);
     return response;
   } catch (error: any) {

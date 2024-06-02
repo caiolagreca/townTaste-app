@@ -6,6 +6,7 @@ import { ErrorCode } from "../exceptions/root";
 
 export function validateSignUp(data: IUserSignUp): IUserSignUp {
   try {
+    console.log("dados2: ", data);
     return SignUpSchema.parse(data);
   } catch (error) {
     console.log("error3: ", error);
