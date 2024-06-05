@@ -1,13 +1,22 @@
 import { ErrorCode } from "./../../../../backend/src/exceptions/root";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  ForgotPasswordResponse,
+  ForgotPasswordUser,
   LoginResponse,
   LoginUser,
+  ResetPasswordData,
   SignUpUser,
   SingUpResponse,
   UserState,
 } from "@/types/userTypes";
-import { loginUser, signUpUser } from "@/services/authService";
+import {
+  forgotPasswordUser,
+  loginUser,
+  resetPasswordUser,
+  signUpUser,
+} from "@/services/authService";
+import { number } from "yup";
 
 const initialState: UserState = {
   user: null,
@@ -45,6 +54,31 @@ export const signUpAction = createAsyncThunk<
   }
 });
 
+export const passwordResetTokenAction = createAsyncThunk<
+  ForgotPasswordResponse,
+  ForgotPasswordUser,
+  { rejectValue: { message: string; errorCode?: number } }
+>("auth/forgotPassword", async (userData, thunkAPI) => {
+  try {
+    const response = await forgotPasswordUser(userData);
+    return response;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export const resetPasswordAction = createAsyncThunk<
+  void,
+  ResetPasswordData,
+  { rejectValue: { message: string; errorCode?: number } }
+>("auth/resetPassword", async (data, thunkAPI) => {
+  try {
+    await resetPasswordUser(data);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -55,6 +89,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    //login
     builder
       .addCase(loginAction.pending, (state) => {
         state.loading = true;
@@ -86,6 +121,7 @@ const authSlice = createSlice({
         }
         state.serverError = action.error.message || null;
       });
+    //signUp
     builder
       .addCase(signUpAction.pending, (state) => {
         state.loading = true;
@@ -102,6 +138,44 @@ const authSlice = createSlice({
         }
       )
       .addCase(signUpAction.rejected, (state, action) => {
+        state.loading = false;
+        state.appError = action?.payload?.message;
+        state.serverError = action?.payload?.message;
+      });
+    //Forgot Password
+    builder
+      .addCase(passwordResetTokenAction.pending, (state) => {
+        state.loading = true;
+        state.appError = null;
+        state.serverError = null;
+      })
+      .addCase(
+        passwordResetTokenAction.fulfilled,
+        (state, action: PayloadAction<ForgotPasswordResponse>) => {
+          state.loading = false;
+          state.token = action.payload.token;
+          state.appError = null;
+          state.serverError = null;
+        }
+      )
+      .addCase(passwordResetTokenAction.rejected, (state, action) => {
+        state.loading = false;
+        state.appError = action?.payload?.message;
+        state.serverError = action?.payload?.message;
+      });
+    //Reset Password
+    builder
+      .addCase(resetPasswordAction.pending, (state) => {
+        state.loading = true;
+        state.appError = null;
+        state.serverError = null;
+      })
+      .addCase(resetPasswordAction.fulfilled, (state) => {
+        state.loading = false;
+        state.appError = null;
+        state.serverError = null;
+      })
+      .addCase(resetPasswordAction.rejected, (state, action) => {
         state.loading = false;
         state.appError = action?.payload?.message;
         state.serverError = action?.payload?.message;

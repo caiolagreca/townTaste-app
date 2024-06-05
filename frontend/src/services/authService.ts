@@ -1,4 +1,12 @@
-import { LoginResponse, LoginUser, SignUpUser, SingUpResponse } from "@/types/userTypes";
+import {
+  ForgotPasswordResponse,
+  ForgotPasswordUser,
+  LoginResponse,
+  LoginUser,
+  ResetPasswordData,
+  SignUpUser,
+  SingUpResponse,
+} from "@/types/userTypes";
 import { baseURL } from "@/utils/baseURL";
 import axios from "axios";
 
@@ -30,6 +38,35 @@ export const signUpUser = async (userData: SignUpUser) => {
     console.log("error SignUpUser: ", error.response.data);
     if (error.response && error.response.data) {
       throw error.response.data || "SignUp failed";
+    } else {
+      throw new Error("Network error or server is not responding");
+    }
+  }
+};
+
+export const forgotPasswordUser = async (data: ForgotPasswordUser) => {
+  try {
+    const response = await axios.post<ForgotPasswordResponse>(
+      `${baseURL}auth/forgot-password`,
+      data
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      throw error.response.data || "SignUp failed";
+    } else {
+      throw new Error("Network error or server is not responding");
+    }
+  }
+};
+
+export const resetPasswordUser = async (data: ResetPasswordData) => {
+  try {
+    await axios.post(`${baseURL}auth/reset-password`, data);
+  } catch (error: any) {
+    console.log("error resetPasswordUser: ", error.response.data);
+    if (error.response && error.response.data) {
+      throw error.response.data || "Reset password failed";
     } else {
       throw new Error("Network error or server is not responding");
     }

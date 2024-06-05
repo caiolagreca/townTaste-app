@@ -31,6 +31,10 @@ export interface LoginUser {
   password: string;
 }
 
+export interface SingUpResponse {
+  user: User;
+}
+
 export interface SignUpUser {
   email: string;
   firstName: string;
@@ -40,8 +44,18 @@ export interface SignUpUser {
   confirmPassword: string;
 }
 
-export interface SingUpResponse {
-  user: User;
+export interface ForgotPasswordResponse {
+  token: string;
+}
+
+export interface ForgotPasswordUser {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  email: string;
+  code: string;
+  newPassword: string;
 }
 
 //Inferring these types from the store itself means that they correctly update as you add more state slices or modify middleware settings.

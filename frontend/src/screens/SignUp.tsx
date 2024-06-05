@@ -2,7 +2,7 @@ import { IconButton } from "@/components/ui/IconButton";
 import { InputField } from "@/components/ui/InputField";
 import { MainButton } from "@/components/ui/MainButton";
 import { loginAction, logout, signUpAction } from "@/redux/slices/authSlice";
-import { LoginScreenNavigationProp } from "@/types/navigationTypes";
+import { SignUpScreenNavigationProp } from "@/types/navigationTypes";
 import { AppDispatch, RootState, SignUpUser } from "@/types/userTypes";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
@@ -31,7 +31,7 @@ const formSchema = Yup.object({
 
 export const SignUp: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useNavigation<SignUpScreenNavigationProp>();
 
   const { user } = useSelector((state: RootState) => state.auth);
 
