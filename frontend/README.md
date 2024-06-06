@@ -96,6 +96,8 @@ npm i expo-auth-session expo-crypto expo-web-browser
             Add the "googleServicesFile" configuration in app.json
             insert the file as a secret in the terminal: eas secret:create --name GOOGLE_SERVICES_JSON --type file --value ./frontend/android/google-services.json
             Now that the secret its in the Google Cloud, delete the file from the project
+            NOTE: If you add the file as a secret in EAS, you need to remove the googleServicesFile from app.json
+            run eas build -p android or eas build -p all (to build android and IOS)
 
         For IOS:
             In Google Cloud account, download the file in IOS Client
@@ -104,6 +106,8 @@ npm i expo-auth-session expo-crypto expo-web-browser
             Add the "googleServicesFile" configuration in app.json
             Insert the file as a secrete in the terminal: eas secret:create --name GOOGLE_SERVICE_INFO_PLIST --type file --value .frontend\ios\GoogleService-Info.plist
             Now that the secret its in the Google Cloud, delete the file from the project
+                NOTE: If you add the file as a secret in EAS, you need to remove the googleServicesFile from app.json
+            run eas build -p ios or eas build -p all (to build android and IOS)
 
 2.Install packages: npm install @react-native-google-signin/google-signin
 
