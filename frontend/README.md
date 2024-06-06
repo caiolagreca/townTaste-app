@@ -94,7 +94,7 @@ npm i expo-auth-session expo-crypto expo-web-browser
             In Google Cloud account, download the file in Android Client
             Place it with the name "google-service.json" in a folder like "android/app" inside the proejct
             Add the "googleServicesFile" configuration in app.json
-            insert the file as a secret in the terminal: eas secret:create --name GOOGLE_SERVICES_JSON --type file --value ./frontend/android/google-services.json
+            insert the file as a secret in the terminal: eas secret:create --name GOOGLE_SERVICES_JSON --type file --value ./android/google-services.json
             Now that the secret its in the Google Cloud, delete the file from the project
             NOTE: If you add the file as a secret in EAS, you need to remove the googleServicesFile from app.json
             run eas build -p android or eas build -p all (to build android and IOS)
@@ -104,7 +104,7 @@ npm i expo-auth-session expo-crypto expo-web-browser
             Place it with the name "GoogleService-Info.plist" in the root of the project
             Find the REVERSED_CLIENT_ID inside the file
             Add the "googleServicesFile" configuration in app.json
-            Insert the file as a secrete in the terminal: eas secret:create --name GOOGLE_SERVICE_INFO_PLIST --type file --value .frontend\ios\GoogleService-Info.plist
+            Insert the file as a secrete in the terminal: eas secret:create --name GOOGLE_SERVICE_INFO_PLIST --type file --value ./ios/GoogleService-Info.plist
             Now that the secret its in the Google Cloud, delete the file from the project
                 NOTE: If you add the file as a secret in EAS, you need to remove the googleServicesFile from app.json
             run eas build -p ios or eas build -p all (to build android and IOS)
