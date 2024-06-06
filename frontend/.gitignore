@@ -35,7 +35,7 @@ yarn-error.*
 *.tsbuildinfo
 
 #android secrets
-android/google-services.json
+android/google-services
 
 #ios secrets
-ios/GoogleService-Info.plist
+ios/GoogleService-Info
