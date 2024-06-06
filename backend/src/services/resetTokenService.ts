@@ -1,36 +1,29 @@
 import { prismaClient } from "..";
-import { JWT_SECRET } from "../secrets";
-import { generateResetToken } from "../utils/generateResetToken";
-import * as jwt from "jsonwebtoken";
 
 export const createResetToken = async (userId: string): Promise<string> => {
-  const token = generateResetToken(userId);
+  const code = Math.floor(1000 + Math.random() * 9000).toString(); // Generate 4-digit code
 
   await prismaClient.passwordResetToken.create({
     data: {
       userId,
-      token,
+      token: code,
       expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
     },
   });
 
-  return token;
+  return code;
 };
 
-export const validateResetToken = async (
-  token: string
-): Promise<string | null> => {
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-    const savedToken = await prismaClient.passwordResetToken.findUnique({
-      where: { token },
-    });
+export const validateResetCode = async (
+  userId: string,
+  code: string
+): Promise<boolean> => {
+  const savedToken = await prismaClient.passwordResetToken.findUnique({
+    where: { userId_token: { userId, token: code } },
+  });
 
-    if (savedToken && savedToken.expiresAt > new Date()) {
-      return decoded.userId;
-    }
-    return null;
-  } catch (error) {
-    return null;
+  if (savedToken && savedToken.expiresAt > new Date()) {
+    return true;
   }
+  return false;
 };

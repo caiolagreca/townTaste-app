@@ -41,6 +41,9 @@ model PasswordResetToken {
   userId    String
 
   createdAt DateTime @default(now())
+
+  @@unique([userId, token]) // Composite unique constraint
+  @@index([userId]) // Index userId for performance
 }
 
 enum Role {

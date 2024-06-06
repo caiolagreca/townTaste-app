@@ -1,6 +1,6 @@
 import {
   createResetToken,
-  validateResetToken,
+  validateResetCode,
 } from "./../services/resetTokenService";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
@@ -62,7 +62,7 @@ export const signup: RequestHandler = async (
     const cleanedUserData = removeUndefinedFields(userData);
 
     const newUser = await prismaClient.user.create({
-      data: cleanedUserData as Prisma.UserCreateInput, // Type assertion
+      data: cleanedUserData as Prisma.UserCreateInput,
     });
 
     res.json({ success: true, user: newUser });
@@ -229,18 +229,12 @@ export const requestPasswordReset: RequestHandler = async (
 ) => {
   const { email } = req.body;
   try {
-    console.log("Received email for password reset:", email);
-
     const user = await prismaClient.user.findUnique({ where: { email } });
-    console.log("User found in database:", user);
-
     if (!user) {
-      console.error("User not found for email:", email);
       throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
     }
-
-    const token = await createResetToken(user.id);
-    await sendResetPasswordEmail(email, token);
+    const code = await createResetToken(user.id);
+    await sendResetPasswordEmail(email, code);
     res
       .status(200)
       .json({ success: true, message: "Password reset email sent" });
@@ -257,10 +251,15 @@ export const resetPassword: RequestHandler = async (
 ) => {
   try {
     const validateData = validateResetPassword(req.body);
-    const { token, newPassword } = validateData;
+    const { email, code, newPassword } = validateData;
 
-    const userId = await validateResetToken(token);
-    if (!userId) {
+    const user = await prismaClient.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
+    }
+
+    const isValidCode = await validateResetCode(user.id, code);
+    if (!isValidCode) {
       throw new BadRequestsException(
         "Invalid or expired token",
         ErrorCode.UNAUTHORIZED
@@ -269,11 +268,13 @@ export const resetPassword: RequestHandler = async (
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prismaClient.user.update({
-      where: { id: userId },
+      where: { id: user.id },
       data: { password: hashedPassword },
     });
 
-    await prismaClient.passwordResetToken.delete({ where: { token } });
+    await prismaClient.passwordResetToken.deleteMany({
+      where: { userId: user.id },
+    });
 
     res
       .status(200)

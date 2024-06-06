@@ -76,7 +76,8 @@ export const UpdatePasswordSchema = z.object({
 });
 
 export const ResetPasswordSchema = z.object({
-  token: z.string(),
+  email: z.string().email({ message: "Invalid email address" }),
+  code: z.string().length(4, { message: "Code must be 4 digits" }),
   newPassword: z
     .string()
     .min(7, { message: "Password must be 7 or more characters long" })

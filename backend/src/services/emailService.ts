@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 
 export const sendResetPasswordEmail = async (
   email: string,
-  token: string
+  code: string
 ): Promise<void> => {
   const transporter = nodemailer.createTransport({
     service: "Hotmail",
@@ -15,14 +15,12 @@ export const sendResetPasswordEmail = async (
     },
   });
 
-  const resetUrl = `http://localhost:3000/reset-password/${token}`;
-
   const mailOptions = {
     to: email,
     from: process.env.EMAIL_USER,
-    subject: "Password Reset",
-    text: `You requested a password reset. Click here to reset your password: ${resetUrl}`,
-    html: `<p>You requested a password reset. Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
+    subject: "Password Reset Code",
+    text: `Your password reset code is: ${code}`,
+    html: `<p>Your password reset code is: <strong>${code}</strong></p>`,
   };
 
   await transporter.sendMail(mailOptions);

@@ -49,6 +49,7 @@ export interface IPasswordUpdate {
 }
 
 export interface IResetPassword {
-  token: string;
+  email: string;
+  code: string;
   newPassword: string;
 }

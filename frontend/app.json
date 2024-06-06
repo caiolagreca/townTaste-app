@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist",
+      "googleServicesFile": "./ios/GoogleService-Info.plist",
       "bundleIdentifier": "com.townTaste.app",
       "config": {
         "googleSignIn": {
