@@ -6,7 +6,6 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { prismaClient } from "..";
 import bcrypt, { compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
-
 import { JWT_SECRET } from "../secrets";
 import { BadRequestsException } from "../exceptions/bad-requests";
 import { ErrorCode } from "../exceptions/root";
@@ -20,6 +19,9 @@ import { validateUpdatePassword } from "../validations/validateUpdatePassword";
 import { sendResetPasswordEmail } from "../services/emailService";
 import { validateResetPassword } from "../validations/validateResetPassword";
 import { Prisma } from "@prisma/client";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Utility function to remove undefined values
 function removeUndefinedFields<T extends object>(obj: T): T {
@@ -27,6 +29,67 @@ function removeUndefinedFields<T extends object>(obj: T): T {
     Object.entries(obj).filter(([_, v]) => v !== undefined)
   ) as T;
 }
+
+export const googleSignIn: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { idToken } = req.body;
+  console.log("Received ID token:", idToken);
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    console.log("Verified ID token, payload:", payload);
+
+    if (!payload) {
+      throw new Error("Invalid token payload");
+    }
+
+    const { sub, email, name, picture } = payload;
+    console.log("Extracted payload:", { sub, email, name, picture });
+
+    if (!email) {
+      throw new Error("Email is required");
+    }
+
+    let user = await prismaClient.user.findUnique({ where: { email } });
+    console.log("User found in database:", user);
+
+    if (!user) {
+      const [firstName, lastName] = name ? name.split(" ") : ["Unknown", ""];
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+      user = await prismaClient.user.create({
+        data: {
+          email,
+          firstName: firstName || "Unknown",
+          lastName: lastName || "",
+          profilePhoto: picture || "",
+          googleId: sub,
+          password: hashedPassword,
+        },
+      });
+      console.log("User created in database:", user);
+    }
+
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+      expiresIn: "24h",
+    });
+    console.log("Generated JWT token:", token);
+
+    res.json({ success: true, user, token });
+  } catch (error) {
+    console.error("Error in googleSignIn handler:", error);
+    next(error);
+  }
+};
 
 export const signup: RequestHandler = async (
   req: Request,

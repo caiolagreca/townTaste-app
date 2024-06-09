@@ -132,3 +132,4 @@ validate if email exists (email verification)
 if the user request a second verification code for reset password, the older one wont be valid anymore (just accept the newer one)
 remove navigation header from authentication pages (login, signup...)
 Splashscreen
+loading icon on the screen when user click a button and is still loading

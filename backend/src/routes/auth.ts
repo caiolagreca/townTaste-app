@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   deleteUser,
   fetchUser,
+  googleSignIn,
   login,
   requestPasswordReset,
   resetPassword,
@@ -18,6 +19,7 @@ authRoutes.post("/signup", errorHandler(signup));
 authRoutes.post("/login", errorHandler(login));
 authRoutes.post("/forgot-password", errorHandler(requestPasswordReset));
 authRoutes.post("/reset-password", errorHandler(resetPassword));
+authRoutes.post("/google-signin", errorHandler(googleSignIn));
 
 authRoutes.use(authMiddleware);
 

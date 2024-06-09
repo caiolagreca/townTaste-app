@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+// src/screens/Login.tsx
+import React from "react";
+import { View, Text, SafeAreaView, Alert } from "react-native";
+import { Formik } from "formik";
 import * as Yup from "yup";
-import { Formik, useFormik } from "formik";
-
-import { Alert, SafeAreaView, Text, View } from "react-native";
-import { MainButton } from "@/components/ui/MainButton";
-import { IconButton } from "@/components/ui/IconButton";
-import { InputField } from "@/components/ui/InputField";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAction, logout } from "@/redux/slices/authSlice";
 import { useNavigation } from "@react-navigation/native";
-import { LoginScreenNavigationProp } from "@/types/navigationTypes";
+import { loginAction, logout } from "@/redux/slices/authSlice";
 import { AppDispatch, RootState } from "../types/userTypes";
+import { MainButton } from "@/components/ui/MainButton";
+import { InputField } from "@/components/ui/InputField";
+import GoogleLoginButton from "@/components/auth/GoogleLogin";
+import { LoginScreenNavigationProp } from "@/types/navigationTypes";
 
 const formSchema = Yup.object({
   email: Yup.string()
@@ -22,25 +22,11 @@ const formSchema = Yup.object({
 export const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<LoginScreenNavigationProp>();
-
   const { user } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    if (user) {
-      navigation.navigate("Home");
-    }
-  }, [user, navigation]);
-
-  useEffect(() => {
-    dispatch(logout());
-  }, [dispatch]);
-
-  const forgotPasswordPressed = () => {
-    navigation.navigate("ForgotPassword");
-  };
-
-  const createAccountPressed = () => {
-    navigation.navigate("SignUp");
+  const handleGoogleLoginSuccess = (user: any) => {
+    console.log("Google user info:", user);
+    // Handle user info, e.g., save to state or send to backend for further processing
   };
 
   const handleLogin = async (
@@ -52,9 +38,9 @@ export const Login: React.FC = () => {
       navigation.navigate("Home");
     } catch (error: any) {
       const errors: { email?: string; password?: string } = {};
-      if (error.errorCode == 1001) {
+      if (error.errorCode === 1001) {
         errors.email = "User not found";
-      } else if (error.errorCode == 1003) {
+      } else if (error.errorCode === 1003) {
         errors.password = "Incorrect password";
       } else {
         errors.email = error.message;
@@ -109,12 +95,11 @@ export const Login: React.FC = () => {
                 error={submitCount > 0 && touched.password && errors.password}
               />
             </View>
-
             <View>
               <MainButton
                 stylePressableProps=""
                 styleTextProps="pb-3 font-poppinsBold text-sm text-secondary-blue self-end"
-                onPressProps={forgotPasswordPressed}
+                onPressProps={() => navigation.navigate("ForgotPassword")}
                 children="Forgot my password"
               />
             </View>
@@ -129,16 +114,14 @@ export const Login: React.FC = () => {
               stylePressableProps="p-3"
               styleTextProps="font-poppins text-center text-base"
               children="Create new account"
-              onPressProps={createAccountPressed}
+              onPressProps={() => navigation.navigate("SignUp")}
             />
             <View className="p-3">
               <Text className="font-poppins text-center text-sm">
                 Or continue with
               </Text>
               <View className="p-1 flex-row justify-center">
-                <IconButton nameProps="logo-google" />
-                <IconButton nameProps="logo-apple" />
-                <IconButton nameProps="logo-facebook" />
+                <GoogleLoginButton onLoginSuccess={handleGoogleLoginSuccess} />
               </View>
             </View>
           </View>
