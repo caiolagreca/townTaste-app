@@ -6,11 +6,11 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { loginAction, logout } from "@/redux/slices/authSlice";
-import { AppDispatch, RootState } from "../types/userTypes";
-import { MainButton } from "@/components/ui/MainButton";
-import { InputField } from "@/components/ui/InputField";
-import GoogleLoginButton from "@/components/auth/GoogleLogin";
 import { LoginScreenNavigationProp } from "@/types/navigationTypes";
+import { AppDispatch, RootState } from "@/types/userTypes";
+import { InputField } from "@/components/ui/InputField";
+import { MainButton } from "@/components/ui/MainButton";
+import GoogleLoginButton from "@/components/auth/GoogleLogin";
 
 const formSchema = Yup.object({
   email: Yup.string()

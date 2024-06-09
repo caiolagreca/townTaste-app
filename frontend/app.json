@@ -32,11 +32,15 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
     "extra": {
       "eas": {
         "projectId": "567ad302-63d0-4b12-a457-52484b479a04"
       }
     },
-    "owner": "caiolagreca"
+    "owner": "caiolagreca",
+    "scheme": "towntaste"
   }
 }

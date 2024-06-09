@@ -20,6 +20,7 @@ model User {
   age          Int?
   email        String   @unique @db.VarChar(100)
   password     String
+  googleId     String?  @unique
   role         Role     @default(CUSTOMER)
   phoneNumber  String?  @unique
   googleId     String?  @unique
