@@ -12,23 +12,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "googleServicesFile": "./ios/GoogleService-Info.plist",
-      "bundleIdentifier": "com.townTaste.app",
-      "config": {
-        "googleSignIn": {
-          "reservedClientId": "com.googleusercontent.apps.468953728495-5cdcfubfhvrn76omjuldpdh66t8h66rf"
-        }
-      }
+      "supportsTablet": true
     },
     "android": {
       "package": "com.townTaste",
-      "versionCode": 1,
-      "googleServicesFile": "./android/google-services.json",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
