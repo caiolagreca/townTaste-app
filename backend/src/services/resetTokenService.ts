@@ -20,7 +20,7 @@ export const validateResetCode = async (
 ): Promise<boolean> => {
   const savedToken = await prismaClient.passwordResetToken.findUnique({
     where: { userId_token: { userId, token: code } },
-  });
+  }); 
 
   if (savedToken && savedToken.expiresAt > new Date()) {
     return true;

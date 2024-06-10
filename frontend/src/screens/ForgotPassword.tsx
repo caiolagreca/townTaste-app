@@ -39,6 +39,7 @@ export const ForgotPassword: React.FC = () => {
   ) => {
     try {
       await dispatch(passwordResetTokenAction(values)).unwrap();
+      //.unwrap() is used to handle the result of an asynchronous operation in a more straightforward way. It allows you to directly get the payload or throw an error if the action was rejected.
       navigation.navigate("ResetPassword", { email: values.email });
     } catch (error: any) {
       const errors: { email?: string } = {};
