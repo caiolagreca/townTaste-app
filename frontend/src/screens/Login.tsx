@@ -4,7 +4,6 @@ import { Formik, useFormik } from "formik";
 
 import { Alert, SafeAreaView, Text, View } from "react-native";
 import { MainButton } from "@/components/ui/MainButton";
-import { IconButton } from "@/components/ui/IconButton";
 import { InputField } from "@/components/ui/InputField";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction, logout } from "@/redux/slices/authSlice";
@@ -56,6 +55,10 @@ export const Login: React.FC = () => {
         errors.email = "User not found";
       } else if (error.errorCode == 1003) {
         errors.password = "Incorrect password";
+      } else if (error.message.includes("Too many login attempts")) {
+        errors.email = error.message;
+      } else if (error.message.includes("attempts left")) {
+        errors.password = error.message;
       } else {
         errors.email = error.message;
       }
@@ -131,16 +134,6 @@ export const Login: React.FC = () => {
               children="Create new account"
               onPressProps={createAccountPressed}
             />
-            <View className="p-3">
-              <Text className="font-poppins text-center text-sm">
-                Or continue with
-              </Text>
-              <View className="p-1 flex-row justify-center">
-                <IconButton nameProps="logo-google" />
-                <IconButton nameProps="logo-apple" />
-                <IconButton nameProps="logo-facebook" />
-              </View>
-            </View>
           </View>
         )}
       </Formik>

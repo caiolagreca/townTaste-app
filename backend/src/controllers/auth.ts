@@ -79,17 +79,37 @@ export const login: RequestHandler = async (
   try {
     const validateData = validateLogin(req.body);
     const { email, password } = validateData;
+    const attemptsLeft = req.body.attemptsLeft;
 
     const user = await prismaClient.user.findUnique({ where: { email } });
     if (!user) {
       throw new NotFoundException("User not found.", ErrorCode.USER_NOT_FOUND);
     }
+
     if (!compareSync(password, user.password)) {
+      await prismaClient.user.update({
+        where: { id: user.id },
+        data: {
+          loginAttempts: {
+            increment: 1,
+          },
+          lastAttempt: new Date(),
+        },
+      });
       throw new BadRequestsException(
-        "Incorrect password.",
+        `Incorrect password. You have ${attemptsLeft - 1} attempts left.`,
         ErrorCode.INCORRECT_PASSWORD
       );
     }
+
+    await prismaClient.user.update({
+      where: { id: user.id },
+      data: {
+        loginAttempts: 0,
+        lastAttempt: null,
+      },
+    });
+
     const token = jwt.sign(
       {
         userId: user.id,

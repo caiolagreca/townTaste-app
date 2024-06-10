@@ -19,6 +19,15 @@ export const loginUser = async (userData: LoginUser) => {
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
+      if (error.response.status === 429) {
+        throw {
+          message: "Too many login attempts. Please try again after 1 minute.",
+        };
+      } else if (error.response.data.attemptsLeft !== undefined) {
+        throw new Error(
+          `${error.response.data.message}. You have ${error.response.data.attemptsLeft} attempts left.`
+        );
+      }
       throw error.response.data || "Login failed";
     } else {
       throw new Error("Network error or server is not responding");

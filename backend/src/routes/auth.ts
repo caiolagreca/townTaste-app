@@ -11,11 +11,12 @@ import {
 } from "../controllers/auth";
 import { errorHandler } from "../error-handler";
 import authMiddleware from "../middlewares/auth";
+import { checkLoginAttempts } from "../middlewares/checkLoginAttempts";
 
 const authRoutes: Router = Router();
 
 authRoutes.post("/signup", errorHandler(signup));
-authRoutes.post("/login", errorHandler(login));
+authRoutes.post("/login", checkLoginAttempts, errorHandler(login));
 authRoutes.post("/forgot-password", errorHandler(requestPasswordReset));
 authRoutes.post("/reset-password", errorHandler(resetPassword));
 
