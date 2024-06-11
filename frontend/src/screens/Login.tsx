@@ -103,16 +103,15 @@ export const Login: React.FC = () => {
               isSubmitting,
             }) => (
               <View className="flex-1 p-3 justify-center">
-                <View className="items-center mb-6">
+                <View className="items-center mb-2">
                   <Image source={logo} className="w-44 h-44" />
                 </View>
                 <View className="items-center mb-6">
-                  <Text className="font-poppinsBold text-3xl text-primary-red mb-2">
-                    Welcome to Towntaste
+                  <Text className="font-poppinsBold text-3xl text-primary-red mb-3">
+                    Towntaste
                   </Text>
                   <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
-                    Discover the best local food experiences in your
-                    location!
+                    Discover the best local food experiences in your location!
                   </Text>
                 </View>
                 <View className="mb-6">
