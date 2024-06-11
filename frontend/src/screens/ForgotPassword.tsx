@@ -56,6 +56,7 @@ export const ForgotPassword: React.FC = () => {
         errors.email = error.message;
       }
       setErrors(errors);
+      console.log(errors);
     } finally {
       setSubmitting(false);
     }
