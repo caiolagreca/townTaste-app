@@ -24,7 +24,7 @@ module.exports = {
         openSans: ["OpenSans_400Regular", "OpenSans_700Bold"],
         lato: ["Lato_400Regular", "Lato_700Bold"],
         poppins: ["Poppins_400Regular"],
-        poppinsBold: ["Poppins_800Bold"],
+        poppinsBold: ["Poppins_700Bold"],
       },
       maxWidth: {
         "3/5": "60%",

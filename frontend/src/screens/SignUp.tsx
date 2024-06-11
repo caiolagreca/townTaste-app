@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { IconButton } from "@/components/ui/IconButton";
 import { InputField } from "@/components/ui/InputField";
 import { MainButton } from "@/components/ui/MainButton";
 import { signUpAction, logout } from "@/redux/slices/authSlice";
