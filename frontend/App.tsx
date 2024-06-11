@@ -15,6 +15,7 @@ import {
   Poppins_400Regular,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { StatusBar } from "expo-status-bar";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -55,6 +56,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
+      <StatusBar style="dark" />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen

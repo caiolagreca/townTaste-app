@@ -37,6 +37,10 @@ export const ResetPassword: React.FC = () => {
   const route = useRoute();
   const { email } = route.params as { email: string };
 
+  const backLoginPressed = () => {
+    navigation.navigate("Login");
+  };
+
   const handleResetPassword = async (
     values: { code: string; newPassword: string; confirmPassword: string },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -138,6 +142,12 @@ export const ResetPassword: React.FC = () => {
                   onPressProps={handleSubmit}
                   isLoading={isSubmitting}
                   children="Reset Password"
+                />
+                <MainButton
+                  stylePressableProps="p-4 bg-secondary-yellow rounded-lg mt-2"
+                  styleTextProps="font-poppinsBold text-base text-neutral-dark text-center"
+                  children="Back to Login"
+                  onPressProps={backLoginPressed}
                 />
               </View>
             )}
