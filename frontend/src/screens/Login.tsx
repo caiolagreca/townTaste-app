@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import * as Yup from "yup";
-import { Formik, useFormik } from "formik";
-
-import { Alert, SafeAreaView, Text, View } from "react-native";
+import { Formik } from "formik";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { MainButton } from "@/components/ui/MainButton";
 import { InputField } from "@/components/ui/InputField";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +18,7 @@ import { loginAction, logout } from "@/redux/slices/authSlice";
 import { useNavigation } from "@react-navigation/native";
 import { LoginScreenNavigationProp } from "@/types/navigationTypes";
 import { AppDispatch, RootState } from "../types/userTypes";
+import logo from "../../assets/logo.png";
 
 const formSchema = Yup.object({
   email: Yup.string()
@@ -21,7 +30,6 @@ const formSchema = Yup.object({
 export const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<LoginScreenNavigationProp>();
-
   const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -70,73 +78,91 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <SafeAreaView>
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        validationSchema={formSchema}
-        onSubmit={handleLogin}
+    <SafeAreaView className="flex-1 bg-neutral-light">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          submitCount,
-          isSubmitting,
-        }) => (
-          <View className="p-3">
-            <View className="items-center">
-              <Text className="font-poppinsBold text-2xl my-3">Login Here</Text>
-              <Text className="font-poppins text-base max-w-3/5 text-center">
-                Welcome back, you've been missed!
-              </Text>
-            </View>
-            <View className="my-3">
-              <InputField
-                inputProps="Email"
-                containerProps="mt-3"
-                value={values.email}
-                onChangeProps={handleChange("email")}
-                onBlurProps={handleBlur("email")}
-                error={submitCount > 0 && touched.email && errors.email}
-              />
-              <InputField
-                inputProps="Password"
-                containerProps="mt-3"
-                secure
-                value={values.password}
-                onChangeProps={handleChange("password")}
-                onBlurProps={handleBlur("password")}
-                error={submitCount > 0 && touched.password && errors.password}
-              />
-            </View>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="always"
+        >
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={formSchema}
+            onSubmit={handleLogin}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              submitCount,
+              isSubmitting,
+            }) => (
+              <View className="flex-1 p-3 justify-center">
+                <View className="items-center mb-6">
+                  <Image source={logo} className="w-44 h-44" />
+                </View>
+                <View className="items-center mb-6">
+                  <Text className="font-poppinsBold text-3xl text-primary-red mb-2">
+                    Welcome to Towntaste
+                  </Text>
+                  <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
+                    Discover the best local food experiences in your
+                    location!
+                  </Text>
+                </View>
+                <View className="mb-6">
+                  <InputField
+                    inputProps="Email"
+                    containerProps="mt-3"
+                    value={values.email}
+                    onChangeProps={handleChange("email")}
+                    onBlurProps={handleBlur("email")}
+                    error={submitCount > 0 && touched.email && errors.email}
+                  />
+                  <InputField
+                    inputProps="Password"
+                    containerProps="mt-3"
+                    secure
+                    value={values.password}
+                    onChangeProps={handleChange("password")}
+                    onBlurProps={handleBlur("password")}
+                    error={
+                      submitCount > 0 && touched.password && errors.password
+                    }
+                  />
+                </View>
 
-            <View>
-              <MainButton
-                stylePressableProps=""
-                styleTextProps="pb-3 font-poppinsBold text-sm text-secondary-blue self-end"
-                onPressProps={forgotPasswordPressed}
-                children="Forgot my password"
-              />
-            </View>
-            <MainButton
-              stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
-              styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
-              onPressProps={handleSubmit}
-              isLoading={isSubmitting}
-              children="Sign in"
-            />
-            <MainButton
-              stylePressableProps="p-3"
-              styleTextProps="font-poppins text-center text-base"
-              children="Create new account"
-              onPressProps={createAccountPressed}
-            />
-          </View>
-        )}
-      </Formik>
+                <View>
+                  <MainButton
+                    stylePressableProps=""
+                    styleTextProps="pb-3 font-poppinsBold text-sm text-secondary-blue self-end"
+                    onPressProps={forgotPasswordPressed}
+                    children="Forgot your password?"
+                  />
+                </View>
+                <MainButton
+                  stylePressableProps="p-4 bg-primary-red my-4 rounded-lg shadow"
+                  styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
+                  onPressProps={handleSubmit}
+                  isLoading={isSubmitting}
+                  children="Sign in"
+                />
+                <MainButton
+                  stylePressableProps="p-4 bg-secondary-yellow rounded-lg mt-2"
+                  styleTextProps="font-poppinsBold text-base text-neutral-dark text-center"
+                  children="Create new account"
+                  onPressProps={createAccountPressed}
+                />
+              </View>
+            )}
+          </Formik>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

@@ -19,12 +19,12 @@ module.exports = {
         },
       },
       fontFamily: {
-        roboto: ["Roboto_400Regular", "Roboto_700Bold"],
+        roboto: ["Roboto_400Regular", "Roboto_800Bold"],
         montserrat: ["Montserrat_400Regular", "Montserrat_700Bold"],
         openSans: ["OpenSans_400Regular", "OpenSans_700Bold"],
         lato: ["Lato_400Regular", "Lato_700Bold"],
         poppins: ["Poppins_400Regular"],
-        poppinsBold: ["Poppins_700Bold"],
+        poppinsBold: ["Poppins_800Bold"],
       },
       maxWidth: {
         "3/5": "60%",

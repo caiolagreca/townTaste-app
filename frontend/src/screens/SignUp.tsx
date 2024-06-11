@@ -1,38 +1,38 @@
+import React, { useEffect } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import { IconButton } from "@/components/ui/IconButton";
 import { InputField } from "@/components/ui/InputField";
 import { MainButton } from "@/components/ui/MainButton";
-import { loginAction, logout, signUpAction } from "@/redux/slices/authSlice";
+import { signUpAction, logout } from "@/redux/slices/authSlice";
 import { SignUpScreenNavigationProp } from "@/types/navigationTypes";
 import { AppDispatch, RootState, SignUpUser } from "@/types/userTypes";
-import { useNavigation } from "@react-navigation/native";
-import { Formik } from "formik";
-import React, { useEffect } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import * as Yup from "yup";
+import logo from "../../assets/logo.png";
 
 const formSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string().required("Password is required"),
-  confirmPassword: Yup.string().required("Confirm your pasword"),
+  confirmPassword: Yup.string().required("Confirm your password"),
   firstName: Yup.string().required("Name is required"),
 });
 
 export const SignUp: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<SignUpScreenNavigationProp>();
-
   const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -44,10 +44,6 @@ export const SignUp: React.FC = () => {
   useEffect(() => {
     dispatch(logout());
   }, [dispatch]);
-
-  const loginPressed = () => {
-    navigation.navigate("Login");
-  };
 
   const handleSignUp = async (
     values: {
@@ -70,26 +66,31 @@ export const SignUp: React.FC = () => {
         confirmPassword: values.confirmPassword,
       };
 
-      console.log("dados: ", signUpData);
       await dispatch(signUpAction(signUpData)).unwrap();
       navigation.navigate("Login");
     } catch (error: any) {
       const errors: { email?: string; password?: string } = {};
       setErrors(errors);
       Alert.alert("Sign Up failed", error.message);
-      console.log("error 6: ", error);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const loginPressed = () => {
+    navigation.navigate("Login");
+  };
+
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-neutral-light">
       <KeyboardAvoidingView
-        className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
       >
-        <ScrollView className="grow">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
           <Formik
             initialValues={{
               email: "",
@@ -112,20 +113,22 @@ export const SignUp: React.FC = () => {
               submitCount,
               isSubmitting,
             }) => (
-              <View className="p-3">
-                <View className="items-center">
-                  <Text className="font-poppinsBold text-2xl my-3">
+              <View className="flex-1 p-3 justify-center">
+                <View className="items-center mb-3">
+                  <Image source={logo} className="w-40 h-40" />
+                </View>
+                <View className="items-center mb-4">
+                  <Text className="font-poppinsBold text-3xl text-primary-red mb-2">
                     Create Account
                   </Text>
-                  <Text className="font-poppins text-sm max-w-4/5 text-center">
-                    Create an account so you can explore all the existing
-                    restaurants
+                  <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
+                    Ready to explore new restaurants?
                   </Text>
                 </View>
-                <View className="my-3">
-                  <View className="flex-row">
+                <View className="mb-6">
+                  <View className="flex-row mb-3">
                     <InputField
-                      inputProps=" First Name"
+                      inputProps="First Name"
                       containerProps="flex-1 mr-2"
                       value={values.firstName}
                       onChangeProps={handleChange("firstName")}
@@ -134,7 +137,6 @@ export const SignUp: React.FC = () => {
                         submitCount > 0 && touched.firstName && errors.firstName
                       }
                     />
-
                     <InputField
                       inputProps="Last Name"
                       containerProps="flex-1 ml-2"
@@ -192,28 +194,18 @@ export const SignUp: React.FC = () => {
                   />
                 </View>
                 <MainButton
-                  stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
+                  stylePressableProps="p-4 bg-primary-red my-4 rounded-lg shadow"
                   styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
                   onPressProps={handleSubmit}
                   isLoading={isSubmitting}
                   children="Sign Up"
                 />
                 <MainButton
-                  stylePressableProps="p-3"
-                  styleTextProps="font-poppins text-center text-base"
+                  stylePressableProps="p-4 bg-secondary-yellow rounded-lg mt-2"
+                  styleTextProps="font-poppinsBold text-base text-neutral-dark text-center"
                   onPressProps={loginPressed}
                   children="Already have an account"
                 />
-                <View className="p-3">
-                  <Text className="font-poppins text-center text-sm">
-                    Or continue with
-                  </Text>
-                  <View className="p-1 flex-row justify-center">
-                    <IconButton nameProps="logo-google" />
-                    <IconButton nameProps="logo-apple" />
-                    <IconButton nameProps="logo-facebook" />
-                  </View>
-                </View>
               </View>
             )}
           </Formik>

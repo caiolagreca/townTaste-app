@@ -27,6 +27,32 @@ npm install react-native-screens react-native-safe-area-context
 
 npm i formik yup
 
+# To insert a SVG file in a RN project:
+
+npm install react-native-svg
+npm install react-native-svg-transformer
+
+create a metro.config.js file in the root of the project:
+
+```javascript
+const { getDefaultConfig } = require("metro-config");
+
+module.exports = (async () => {
+  const {
+    resolver: { sourceExts, assetExts },
+  } = await getDefaultConfig();
+  return {
+    transformer: {
+      babelTransformerPath: require.resolve("react-native-svg-transformer"),
+    },
+    resolver: {
+      assetExts: assetExts.filter((ext) => ext !== "svg"),
+      sourceExts: [...sourceExts, "svg"],
+    },
+  };
+})();
+```
+
 # Forgot Password feature explanation:
 
 1.The user forgets their password and clicks the "Forgot my password" button on the login screen, navigating to the ForgotPassword screen.

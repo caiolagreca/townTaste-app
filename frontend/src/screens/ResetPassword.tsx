@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { Alert, SafeAreaView, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { MainButton } from "@/components/ui/MainButton";
 import { InputField } from "@/components/ui/InputField";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../types/userTypes";
 import { resetPasswordAction } from "@/redux/slices/authSlice";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FourDigitInput } from "@/components/ui/FourDigitInput";
 import { ResetPasswordScreenNavigationProp } from "@/types/navigationTypes";
+import { AppDispatch } from "../types/userTypes";
+import logo from "../../assets/logo.png";
 
 const formSchema = Yup.object({
   code: Yup.string()
@@ -21,7 +31,7 @@ const formSchema = Yup.object({
     .required("Confirm your password"),
 });
 
-export const ResetPasword: React.FC = () => {
+export const ResetPassword: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<ResetPasswordScreenNavigationProp>();
   const route = useRoute();
@@ -49,77 +59,91 @@ export const ResetPasword: React.FC = () => {
   };
 
   return (
-    <SafeAreaView>
-      <Formik
-        initialValues={{ code: "", newPassword: "", confirmPassword: "" }}
-        validationSchema={formSchema}
-        onSubmit={handleResetPassword}
+    <SafeAreaView className="flex-1 bg-neutral-light">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          submitCount,
-          isSubmitting,
-          setFieldValue,
-        }) => (
-          <View className="p-3">
-            <View className="items-center">
-              <Text className="font-poppinsBold text-2xl my-3">
-                Reset Password
-              </Text>
-              <Text className="font-poppins text-base max-w-3/5 text-center">
-                Enter your new password below
-              </Text>
-            </View>
-            <View className="my-3">
-              <FourDigitInput
-                value={values.code}
-                onChange={(value) => setFieldValue("code", value)}
-              />
-
-              {submitCount > 0 && touched.code && errors.code && (
-                <Text style={{ color: "red" }}>{errors.code}</Text>
-              )}
-              <InputField
-                inputProps="New Password"
-                containerProps="mt-3"
-                secure
-                value={values.newPassword}
-                onChangeProps={handleChange("newPassword")}
-                onBlurProps={handleBlur("newPassword")}
-                error={
-                  submitCount > 0 && touched.newPassword && errors.newPassword
-                }
-              />
-              <InputField
-                inputProps="Confirm Password"
-                containerProps="mt-3"
-                secure
-                value={values.confirmPassword}
-                onChangeProps={handleChange("confirmPassword")}
-                onBlurProps={handleBlur("confirmPassword")}
-                error={
-                  submitCount > 0 &&
-                  touched.confirmPassword &&
-                  errors.confirmPassword
-                }
-              />
-            </View>
-            <View></View>
-            <MainButton
-              stylePressableProps="p-3 bg-primary-red my-3 rounded-lg shadow"
-              styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
-              onPressProps={handleSubmit}
-              isLoading={isSubmitting}
-              children="Reset Password"
-            />
-          </View>
-        )}
-      </Formik>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Formik
+            initialValues={{ code: "", newPassword: "", confirmPassword: "" }}
+            validationSchema={formSchema}
+            onSubmit={handleResetPassword}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              submitCount,
+              isSubmitting,
+              setFieldValue,
+            }) => (
+              <View className="flex-1 p-3 justify-center">
+                <View className="items-center mb-6">
+                  <Image source={logo} style={{ width: 120, height: 120 }} />
+                </View>
+                <View className="items-center mb-6">
+                  <Text className="font-poppinsBold text-3xl text-primary-red mb-2">
+                    Reset Password
+                  </Text>
+                  <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
+                    Enter the code sent to your email and your new password
+                    below.
+                  </Text>
+                </View>
+                <View className="mb-6">
+                  <FourDigitInput
+                    value={values.code}
+                    onChange={(value) => setFieldValue("code", value)}
+                  />
+                  {submitCount > 0 && touched.code && errors.code && (
+                    <Text style={{ color: "red" }}>{errors.code}</Text>
+                  )}
+                  <InputField
+                    inputProps="New Password"
+                    containerProps="mt-3"
+                    secure
+                    value={values.newPassword}
+                    onChangeProps={handleChange("newPassword")}
+                    onBlurProps={handleBlur("newPassword")}
+                    error={
+                      submitCount > 0 &&
+                      touched.newPassword &&
+                      errors.newPassword
+                    }
+                  />
+                  <InputField
+                    inputProps="Confirm Password"
+                    containerProps="mt-3"
+                    secure
+                    value={values.confirmPassword}
+                    onChangeProps={handleChange("confirmPassword")}
+                    onBlurProps={handleBlur("confirmPassword")}
+                    error={
+                      submitCount > 0 &&
+                      touched.confirmPassword &&
+                      errors.confirmPassword
+                    }
+                  />
+                </View>
+                <MainButton
+                  stylePressableProps="p-4 bg-primary-red my-4 rounded-lg shadow"
+                  styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
+                  onPressProps={handleSubmit}
+                  isLoading={isSubmitting}
+                  children="Reset Password"
+                />
+              </View>
+            )}
+          </Formik>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

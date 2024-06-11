@@ -41,10 +41,8 @@ export const signUpUser = async (userData: SignUpUser) => {
       `${baseURL}auth/signup`,
       userData
     );
-    console.log("resposta: ", response.data);
     return response.data;
   } catch (error: any) {
-    console.log("error SignUpUser: ", error.response.data);
     if (error.response && error.response.data) {
       throw error.response.data || "SignUp failed";
     } else {
@@ -73,7 +71,6 @@ export const resetPasswordUser = async (data: ResetPasswordData) => {
   try {
     await axios.post(`${baseURL}auth/reset-password`, data);
   } catch (error: any) {
-    console.log("error resetPasswordUser: ", error.response.data);
     if (error.response && error.response.data) {
       throw error.response.data || "Reset password failed";
     } else {

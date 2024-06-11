@@ -9,10 +9,8 @@ export const errorHandler = (method: RequestHandler): RequestHandler => {
     try {
       await method(req, res, next);
     } catch (error: any) {
-      console.log("erro1: ", error);
       let exception: HttpException;
       if (error instanceof HttpException) {
-        console.log("erro2: ", error);
         exception = error;
       } else {
         if (error instanceof ZodError) {
@@ -20,9 +18,7 @@ export const errorHandler = (method: RequestHandler): RequestHandler => {
             "Unprocessable entity.",
             ErrorCode.UNPROCESSABLE_ENTITY
           );
-          console.log("erro31: ", error);
         } else {
-          console.log("erro4: ", error);
           exception = new InternalException(
             "Something went wrong.",
             error.message,
