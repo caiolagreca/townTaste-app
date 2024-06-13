@@ -21,8 +21,7 @@ export const SignUpSchema = z
       .string()
       .optional()
       .refine(
-        (val) =>
-          val === undefined || val === "" || /^\+\d{1,4}\s?\d{7,14}$/.test(val),
+        (val) => val === undefined || val === "" || /^\d{7,14}$/.test(val),
         {
           message: "Invalid phone number format",
         }

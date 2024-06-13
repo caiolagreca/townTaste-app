@@ -151,6 +151,7 @@ export const SignUp: React.FC = () => {
                     inputProps="Phone Number"
                     containerProps="mt-3"
                     value={values.phoneNumber}
+                    keyboardType="numeric"
                     onChangeProps={handleChange("phoneNumber")}
                     onBlurProps={handleBlur("phoneNumber")}
                     error={

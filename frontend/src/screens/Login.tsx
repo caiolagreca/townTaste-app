@@ -101,64 +101,74 @@ export const Login: React.FC = () => {
               touched,
               submitCount,
               isSubmitting,
-            }) => (
-              <View className="flex-1 p-3 justify-center">
-                <View className="items-center mb-2">
-                  <Image source={logo} className="w-44 h-44" />
-                </View>
-                <View className="items-center mb-6">
-                  <Text className="font-poppinsBold text-3xl text-primary-red mb-3">
-                    Towntaste
-                  </Text>
-                  <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
-                    Discover the best local food experiences in your location!
-                  </Text>
-                </View>
-                <View className="mb-6">
-                  <InputField
-                    inputProps="Email"
-                    containerProps="mt-3"
-                    value={values.email}
-                    onChangeProps={handleChange("email")}
-                    onBlurProps={handleBlur("email")}
-                    error={submitCount > 0 && touched.email && errors.email}
-                  />
-                  <InputField
-                    inputProps="Password"
-                    containerProps="mt-3"
-                    secure
-                    value={values.password}
-                    onChangeProps={handleChange("password")}
-                    onBlurProps={handleBlur("password")}
-                    error={
-                      submitCount > 0 && touched.password && errors.password
-                    }
-                  />
-                </View>
+              resetForm,
+            }) => {
+              useEffect(() => {
+                const unsubscribe = navigation.addListener("focus", () => {
+                  resetForm();
+                });
+                return unsubscribe;
+              }, [navigation, resetForm]);
 
-                <View>
+              return (
+                <View className="flex-1 p-3 justify-center">
+                  <View className="items-center mb-2">
+                    <Image source={logo} className="w-44 h-44" />
+                  </View>
+                  <View className="items-center mb-6">
+                    <Text className="font-poppinsBold text-3xl text-primary-red mb-3">
+                      Towntaste
+                    </Text>
+                    <Text className="font-poppins text-lg text-neutral-dark max-w-4/5 text-center">
+                      Discover the best local food experiences in your location!
+                    </Text>
+                  </View>
+                  <View className="mb-6">
+                    <InputField
+                      inputProps="Email"
+                      containerProps="mt-3"
+                      value={values.email}
+                      onChangeProps={handleChange("email")}
+                      onBlurProps={handleBlur("email")}
+                      error={submitCount > 0 && touched.email && errors.email}
+                    />
+                    <InputField
+                      inputProps="Password"
+                      containerProps="mt-3"
+                      secure
+                      value={values.password}
+                      onChangeProps={handleChange("password")}
+                      onBlurProps={handleBlur("password")}
+                      error={
+                        submitCount > 0 && touched.password && errors.password
+                      }
+                    />
+                  </View>
+
+                  <View>
+                    <MainButton
+                      stylePressableProps=""
+                      styleTextProps="pb-3 font-poppinsBold text-sm text-secondary-blue self-end"
+                      onPressProps={forgotPasswordPressed}
+                      children="Forgot your password?"
+                    />
+                  </View>
                   <MainButton
-                    stylePressableProps=""
-                    styleTextProps="pb-3 font-poppinsBold text-sm text-secondary-blue self-end"
-                    onPressProps={forgotPasswordPressed}
-                    children="Forgot your password?"
+                    stylePressableProps="p-4 bg-primary-red my-4 rounded-lg shadow"
+                    styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
+                    onPressProps={handleSubmit}
+                    isLoading={isSubmitting}
+                    children="Sign in"
+                  />
+                  <MainButton
+                    stylePressableProps="p-4 bg-secondary-yellow rounded-lg mt-2"
+                    styleTextProps="font-poppinsBold text-base text-neutral-dark text-center"
+                    children="Create new account"
+                    onPressProps={createAccountPressed}
                   />
                 </View>
-                <MainButton
-                  stylePressableProps="p-4 bg-primary-red my-4 rounded-lg shadow"
-                  styleTextProps="font-poppinsBold text-neutral-light text-center text-lg"
-                  onPressProps={handleSubmit}
-                  isLoading={isSubmitting}
-                  children="Sign in"
-                />
-                <MainButton
-                  stylePressableProps="p-4 bg-secondary-yellow rounded-lg mt-2"
-                  styleTextProps="font-poppinsBold text-base text-neutral-dark text-center"
-                  children="Create new account"
-                  onPressProps={createAccountPressed}
-                />
-              </View>
-            )}
+              );
+            }}
           </Formik>
         </ScrollView>
       </KeyboardAvoidingView>
