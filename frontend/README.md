@@ -186,3 +186,4 @@ reset password through sms code
 validate if email exists (email verification)
 if the user request a second verification code for reset password, the older one wont be valid anymore (just accept the newer one)
 Splashscreen
+Change phone number error message

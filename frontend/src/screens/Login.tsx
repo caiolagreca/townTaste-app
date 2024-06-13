@@ -45,7 +45,7 @@ export const Login: React.FC = () => {
   const forgotPasswordPressed = () => {
     navigation.navigate("ForgotPassword");
   };
-
+  
   const createAccountPressed = () => {
     navigation.navigate("SignUp");
   };
