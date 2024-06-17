@@ -34,7 +34,7 @@ Towntaste is a mobile application designed to helping users discover and share t
 - Coupons
 - Settings Page
 
-  **User Authentication Improvement**
+**User Authentication Improvement**
 
 - OAuth
 - Two-factor authentication

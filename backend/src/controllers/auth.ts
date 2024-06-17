@@ -66,7 +66,14 @@ export const signup: RequestHandler = async (
     });
 
     res.json({ success: true, user: newUser });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === "P2002" && error.meta?.target?.includes("phoneNumber")) {
+      console.log("erro", error.meta);
+      return res.status(400).json({
+        message: "Phone number already registered.",
+        success: false,
+      });
+    }
     next(error);
   }
 };
